@@ -200,10 +200,8 @@ input[type=range]{accent-color:var(--ink);width:130px}
 .tl li::before{content:"";position:absolute;left:0;top:6px;width:9px;height:9px;background:var(--raise);border:1.5px solid var(--ink)}
 .tl time{display:block;font:500 10.5px var(--mono);color:var(--faint);letter-spacing:.04em;text-transform:uppercase}
 
-/* ───────────── Studies ───────────── */
-.filters{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:-24px 0 36px}
+/* ───────────── Progresso ───────────── */
 .study-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.study h3{font-size:17px;letter-spacing:-.015em}
 .bar{height:3px;background:var(--line);overflow:hidden}
 .bar i{display:block;height:100%;width:var(--w);background:var(--ink)}
 .rv.in .bar i{animation:grow 1.3s var(--ease) both .25s}
@@ -212,8 +210,6 @@ input[type=range]{accent-color:var(--ink);width:130px}
 .bar-row .bar{flex:1}
 .notes{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:5px}
 .notes li{font:11px var(--mono);padding:3px 7px;background:var(--raise);border:1px solid var(--line);color:var(--muted)}
-.study-foot{margin-top:auto;padding-top:12px;border-top:1px dashed var(--line-strong);display:flex;justify-content:space-between;align-items:center;font:11px var(--mono);color:var(--faint)}
-.frame.hide{display:none}
 
 /* ───────────── Stack ───────────── */
 .skill{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:11px 0;border-top:1px dashed var(--line-strong)}
@@ -252,19 +248,8 @@ input[type=range]{accent-color:var(--ink);width:130px}
 .tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
 
 /* ───────────── Lab ───────────── */
-.lab-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:34px;align-items:start}
-.lab-nav{position:sticky;top:84px}
-.lab-nav .card{padding:8px;gap:2px}
-.lab-nav a{display:flex;gap:11px;align-items:center;padding:9px;border:1px solid transparent;transition:background .2s,border-color .2s}
-.lab-nav a:hover{background:var(--raise)}
-.lab-nav a[aria-current="page"]{background:var(--raise);border-color:var(--line-strong)}
-.lab-nav .ico{width:30px;height:30px;flex:none;display:grid;place-items:center;border:1px solid var(--line);background:var(--card);color:var(--muted);transition:all .25s}
-.lab-nav a[aria-current="page"] .ico{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.lab-nav .ico svg{width:15px;height:15px}
-.lab-nav b{display:block;font-size:13px;font-weight:600;line-height:1.3}
-.lab-nav small{display:block;font:10.5px var(--mono);color:var(--faint);line-height:1.4}
-.lab-nav-title{padding:8px 9px 6px}
-#labPanel{display:flex;flex-direction:column;gap:30px;min-width:0}
+.lab-pane{display:flex;flex-direction:column;gap:30px;min-width:0}
+.lab-pane .lab-head .tag,.lab-pane .lab-head .h2{display:none}
 .lab-head{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
 .lab-head p{color:var(--muted);max-width:66ch;font-size:15px}
 .sim{padding:0;gap:0;overflow:hidden}
@@ -428,6 +413,129 @@ pre{margin:0;padding:16px 18px;overflow:auto;font:12px/1.7 var(--mono);tab-size:
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(1.35)}}
 @keyframes sheetIn{from{opacity:0;transform:translate(14px,-10px) rotate(4deg)}to{opacity:1;transform:none}}
 
+/* ───────────── Roadmap ───────────── */
+.rm-top{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between;padding:14px 18px;border:1px solid var(--line);background:var(--card);margin-bottom:44px}
+.rm-where{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:13.5px}
+.rm-where b{font-weight:600}
+.rm-total{display:flex;align-items:center;gap:10px;font:500 11px var(--mono);color:var(--muted)}
+.rm-total .bar{width:110px}
+.legend-rm{display:flex;flex-wrap:wrap;gap:14px;font:500 10.5px var(--mono);color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+.legend-rm span{display:inline-flex;align-items:center;gap:7px}
+.lg{width:20px;border-top:1.5px solid var(--ink)}
+.lg.a{border-top-style:dashed}
+.lg.p{border-top:1.5px dashed var(--line-strong)}
+
+.rmap{position:relative;display:flex;flex-direction:column;gap:52px;padding:4px 0 12px}
+.rm-wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;opacity:0;transition:opacity 1s var(--ease) .25s}
+.rmap.in .rm-wires{opacity:1}
+.rm-wires path{fill:none;stroke-width:1.3;stroke-linecap:round}
+.w-done{stroke:var(--ink)}
+.w-doing{stroke:var(--ink);stroke-dasharray:4 4;animation:dash 1.2s linear infinite}
+.w-next{stroke:var(--line-strong);stroke-dasharray:3 5}
+.rm-wires .w-route{stroke:var(--ink);stroke-width:2.6;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 2.2s cubic-bezier(.4,.1,.2,1) .5s}
+.rmap.in .w-route{stroke-dashoffset:0}
+.rm-pkt{position:absolute;left:0;top:0;z-index:3;width:9px;height:9px;background:var(--ink);box-shadow:0 0 0 3px var(--paper);offset-rotate:0deg;offset-anchor:center;pointer-events:none;opacity:0}
+
+.rm-row{display:grid;grid-template-columns:minmax(0,1fr) 190px minmax(0,1fr);align-items:center}
+.rm-root,.rm-hub{grid-column:2;grid-row:1;justify-self:center;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center}
+.rm-label{display:flex;flex-direction:column;gap:3px;background:var(--paper);padding:3px 8px}
+.rm-label b{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.rm-label small{font:10.5px var(--mono);color:var(--faint);letter-spacing:.02em}
+.rm-seed{width:52px;height:52px;display:grid;place-items:center;background:var(--ink);color:var(--paper);font-weight:600;font-size:16px;letter-spacing:-.02em;box-shadow:0 0 0 5px var(--paper),0 0 0 6px var(--line-strong)}
+.rm-knot{width:14px;height:14px;background:var(--paper);border:1.5px solid var(--ink);transform:rotate(45deg)}
+.rm-hub.done .rm-knot{background:var(--ink)}
+.rm-hub.next .rm-knot{border:1.5px dashed var(--faint)}
+.rm-hub.next .rm-label b{color:var(--muted)}
+.rm-leaves{grid-row:1;display:flex;flex-direction:column;gap:12px}
+.rm-row.r .rm-leaves{grid-column:3;align-items:flex-start;padding-left:34px}
+.rm-row.l .rm-leaves{grid-column:1;align-items:flex-end;padding-right:34px}
+
+.leaf{position:relative;display:flex;align-items:center;gap:12px;width:min(100%,310px);padding:11px 14px;background:linear-gradient(180deg,var(--raise),var(--card));border:1px solid var(--line);transition:border-color .25s,box-shadow .3s,opacity .8s var(--ease),transform .8s var(--ease)}
+.leaf:hover{border-color:var(--ink);box-shadow:var(--shadow)}
+.leaf.rv.in:hover{transform:translateY(-2px)}
+.rm-row.l .leaf{flex-direction:row-reverse;text-align:right}
+.leaf-pin{flex:none;width:11px;height:11px;border:1.5px solid var(--ink);background:var(--paper);position:relative}
+.leaf[data-s="concluido"] .leaf-pin{background:var(--ink)}
+.leaf[data-s="andamento"] .leaf-pin::after{content:"";position:absolute;inset:1.5px;border-radius:50%;background:var(--live)}
+.leaf[data-s="proximo"]{border-style:dashed;background:var(--paper)}
+.leaf[data-s="proximo"] b{color:var(--muted)}
+.leaf[data-s="proximo"] .leaf-pin{border:1.5px dashed var(--faint)}
+.leaf-tx{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
+.leaf b{font-size:13.5px;font-weight:600;letter-spacing:-.01em;line-height:1.3}
+.leaf-meta{display:flex;align-items:center;gap:8px;font:500 10.5px var(--mono);color:var(--faint)}
+.rm-row.l .leaf-meta{flex-direction:row-reverse}
+.leaf .bar{display:block;width:46px;flex:none}
+.leaf.here{border-color:var(--ink);box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--ink)}
+.leaf.here .leaf-pin::before{content:"";position:absolute;inset:-7px;border:1px solid var(--ink);animation:ping 1.8s ease-out infinite}
+.here-tag{position:absolute;top:-11px;left:12px;display:inline-flex;align-items:center;gap:6px;padding:3px 8px;background:var(--ink);color:var(--paper);font:500 9.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.rm-row.l .here-tag{left:auto;right:12px}
+.here-tag .live{width:6px;height:6px}
+@keyframes ping{from{transform:scale(.5);opacity:1}to{transform:scale(1.6);opacity:0}}
+
+/* página do tópico */
+.topic{display:flex;flex-direction:column;gap:30px}
+.topic[hidden],#rmMap[hidden]{display:none}
+.tp-bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.tp-bar .btn:hover svg{transform:translateX(-3px)}
+.crumbs{display:flex;flex-wrap:wrap;gap:8px;font:500 10.5px var(--mono);color:var(--faint);text-transform:uppercase;letter-spacing:.07em}
+.crumbs b{color:var(--ink);font-weight:500}
+.tp-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,340px);gap:34px;align-items:end}
+.tp-intro{display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.tp-tags{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.badge.here-b{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.badge.here-b::before{background:var(--live)}
+.tp-intro .sub{color:var(--muted);font-size:15px;max-width:60ch}
+.tp-intro .bar-row{width:min(100%,420px)}
+.trail{display:flex;align-items:flex-start}
+.trail a{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:9px;font-size:11.5px;line-height:1.3;color:var(--muted);text-align:center;position:relative;padding:0 4px;transition:color .2s}
+.trail a:hover{color:var(--ink)}
+.trail a::before{content:"";position:absolute;top:5px;right:50%;width:100%;border-top:1px dashed var(--line-strong)}
+.trail a[data-s="concluido"]::before,.trail a[data-s="andamento"]::before{border-top:1px solid var(--ink)}
+.trail a:first-child::before{display:none}
+.trail i{width:11px;height:11px;border:1.5px solid var(--ink);background:var(--paper);position:relative;z-index:1}
+.trail a[data-s="concluido"] i{background:var(--ink)}
+.trail a[data-s="proximo"] i{border:1.5px dashed var(--faint)}
+.trail a[aria-current] {color:var(--ink);font-weight:600}
+.trail a[aria-current] i{box-shadow:0 0 0 3px var(--card),0 0 0 4px var(--ink)}
+.tp-tabs{display:flex;justify-content:flex-start;border-bottom:1px solid var(--line);padding-bottom:18px}
+.tp-tabs .seg button{height:32px;padding:0 14px;display:inline-flex;align-items:center;gap:8px;font-size:13px}
+.cnt{font:500 10.5px var(--mono);color:var(--faint)}
+.tp-pane{min-width:0}
+.tp-nav{display:flex;justify-content:space-between;gap:16px;border-top:1px dashed var(--line-strong);padding-top:20px}
+.tp-nav a{display:flex;flex-direction:column;gap:4px;max-width:48%}
+.tp-nav a.nx{text-align:right;margin-left:auto}
+.tp-nav small{font:500 10.5px var(--mono);color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+.tp-nav b{font-size:14px;font-weight:600;transition:color .2s}
+.tp-nav a:hover b{text-decoration:underline;text-underline-offset:3px}
+
+.notes-wrap{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:30px;align-items:start}
+.note-list{display:flex;flex-direction:column;gap:22px}
+.note.atencao{border-left:2px solid var(--warn)}
+.note-ul{margin:0;padding:0 0 0 18px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--soft)}
+.mini-code{margin:0;padding:14px 16px;background:var(--paper);border:1px solid var(--line);font:12px/1.65 var(--mono);overflow-x:auto;white-space:pre}
+.note-aside{position:sticky;top:84px}
+.refs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+.refs a{color:var(--soft);text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px}
+.refs a:hover{color:var(--ink)}
+.empty-box{border:1px dashed var(--line-strong);padding:40px 24px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;background:repeating-linear-gradient(135deg,var(--hatch) 0 1px,transparent 1px 8px)}
+.empty-box b{font-size:15px;font-weight:600}
+.empty-box span{font-size:13px;color:var(--muted)}
+
+.proj-prev{border:1px solid var(--line);background:var(--paper);font:11.5px/1.75 var(--mono);color:var(--muted);padding:0 14px 12px;min-height:150px}
+.proj-prev .dots{display:flex;align-items:center;gap:5px;padding:9px 0;margin-bottom:6px;border-bottom:1px solid var(--line)}
+.proj-prev .dots i{width:8px;height:8px;border-radius:50%;border:1px solid var(--line-strong)}
+.proj-prev .dots span{margin-left:8px;font-size:10.5px;color:var(--faint)}
+.proj-prev > span{display:block;white-space:pre;overflow:hidden;text-overflow:ellipsis;clip-path:inset(0 100% 0 0)}
+.rv.in .proj-prev > span{animation:typeIn .5s steps(18,end) both;animation-delay:calc(var(--i) * 260ms + 350ms)}
+.proj-prev .cmd{color:var(--ink)}
+.proj-prev .ok{color:var(--ok)}
+.proj-prev .err{color:var(--err)}
+@keyframes typeIn{to{clip-path:inset(0 0 0 0)}}
+.proj h3{font-size:16px;letter-spacing:-.015em}
+.proj-shows{padding:12px 14px;background:var(--raise);border:1px solid var(--line);border-left:2px solid var(--ink);font-size:13px;display:flex;flex-direction:column;gap:6px}
+.proj-links{display:flex;gap:18px;margin-top:auto;padding-top:12px;border-top:1px dashed var(--line-strong)}
+.soon{font:11px var(--mono);color:var(--faint)}
+
 /* ───────────── Sobre mim ───────────── */
 .about{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:30px}
 .id-top{display:flex;align-items:center;gap:16px}
@@ -462,11 +570,6 @@ pre{margin:0;padding:16px 18px;overflow:auto;font:12px/1.7 var(--mono);tab-size:
 
 /* ───────────── Responsive ───────────── */
 @media (max-width:980px){
-  .lab-layout{grid-template-columns:1fr}
-  .lab-nav{position:static}
-  .lab-nav .card{flex-direction:row;overflow-x:auto;scrollbar-width:none}
-  .lab-nav-title,.lab-nav small{display:none}
-  .lab-nav a{flex:none}
   .panels{grid-template-columns:1fr!important}
   .panel{border-left:0;border-top:1px solid var(--line)}
   .panel:first-child{border-top:0}
@@ -477,7 +580,25 @@ pre{margin:0;padding:16px 18px;overflow:auto;font:12px/1.7 var(--mono);tab-size:
   .tabs{order:3;width:100%;margin:0}
   .brand{margin-right:auto}
   .tab{flex:1;padding:6px 8px}
-  .grid-2,.grid-3,.bento,.about{grid-template-columns:1fr}
+  .grid-2,.grid-3,.bento,.about,.tp-head,.notes-wrap{grid-template-columns:minmax(0,1fr)}
+  .note-aside{position:static}
+  .rm-top{margin-bottom:30px}
+  .rmap{gap:30px}
+  .rm-row{grid-template-columns:28px minmax(0,1fr);row-gap:14px}
+  .rm-root,.rm-hub{grid-column:1/-1;flex-direction:row;justify-self:start;text-align:left;gap:10px}
+  .rm-seed{width:28px;height:28px;font-size:11px;box-shadow:0 0 0 4px var(--paper),0 0 0 5px var(--line-strong)}
+  .rm-knot{margin:0 7px}
+  .rm-row.r .rm-leaves,.rm-row.l .rm-leaves{grid-column:2;grid-row:2;align-items:stretch;padding:0 0 0 14px}
+  .rm-row.l .leaf{flex-direction:row;text-align:left}
+  .rm-row.l .leaf-meta{flex-direction:row}
+  .rm-row.l .here-tag{right:auto;left:12px}
+  .leaf{width:100%}
+  .trail{flex-direction:column;gap:12px}
+  .trail a{flex:none;flex-direction:row;align-items:center;text-align:left;gap:12px;padding:0}
+  .trail a::before{top:auto;bottom:50%;right:auto;left:5px;width:0;height:calc(100% + 12px);border-top:0!important;border-left:1px dashed var(--line-strong)}
+  .trail a[data-s="concluido"]::before,.trail a[data-s="andamento"]::before{border-left:1px solid var(--ink)}
+  .tp-tabs .seg{width:100%}
+  .tp-tabs .seg button{flex:1;justify-content:center;padding:0 4px;gap:5px;font-size:11.5px;white-space:nowrap}
   .journey{grid-template-columns:1fr;padding:0 0 0 28px;gap:18px}
   .journey::before{left:5px;right:auto;top:0;bottom:0;border-top:0;border-left:1px dashed var(--line-strong);transform:scaleY(0);transform-origin:top}
   .j-step::before{left:-28px;top:2px}
@@ -504,6 +625,7 @@ pre{margin:0;padding:16px 18px;overflow:auto;font:12px/1.7 var(--mono);tab-size:
   .line-draw{stroke-dashoffset:0}
   .journey::before{transform:none}
   .j-step{opacity:1;transform:none}
+  .rm-wires .w-route{stroke-dashoffset:0}
 }
 </style>
 </head>
@@ -685,34 +807,127 @@ const DATA = {
     }
   },
 
-  // status: "andamento" | "concluido" | "proximo"   ·   lab: id de um laboratório (opcional)
-  studiesHead: { tag: "Trilha de estudos", title: "O que estou\n*estudando agora*", sub: "Cada tópico com progresso, anotações e, quando existe, uma demonstração interativa no laboratório." },
-  studies: [
-    { title: "Idempotência", area: "Confiabilidade", status: "andamento", progress: 80, since: "set 2026", lab: "idempotencia",
-      summary: "Garantir que repetir uma requisição não repita o efeito — a base para retries seguros em pagamentos e filas.",
-      notes: ["Idempotency-Key", "SET NX atômico", "Dedup em filas"] },
-    { title: "Retry com backoff exponencial", area: "Confiabilidade", status: "concluido", progress: 100, since: "ago 2026", lab: "retry",
-      summary: "Repetir falhas transitórias sem derrubar o serviço que está tentando se recuperar.",
-      notes: ["Backoff com teto", "Full vs equal jitter", "Erros transitórios"] },
-    { title: "Circuit Breaker", area: "Resiliência", status: "andamento", progress: 60, since: "out 2026", lab: "circuit",
-      summary: "Parar de chamar uma dependência que está falhando e testar a volta com cuidado.",
-      notes: ["Meio-aberto", "Fail fast", "Janela deslizante"] },
-    { title: "Rate limiting · Token Bucket", area: "Proteção", status: "andamento", progress: 45, since: "out 2026", lab: "ratelimit",
-      summary: "Permitir rajadas curtas mantendo uma taxa média sustentável por cliente.",
-      notes: ["Token vs leaky", "Redis + Lua", "Retry-After"] },
-    { title: "Transactional Outbox", area: "Mensageria", status: "andamento", progress: 30, since: "out 2026",
-      summary: "Gravar no banco e publicar o evento sem perder nenhum dos dois.",
-      notes: ["Dual write", "CDC com Debezium"] },
-    { title: "Índices e planos de execução", area: "Dados", status: "concluido", progress: 100, since: "jun 2026",
-      summary: "Ler EXPLAIN ANALYZE e escolher o índice certo para cada consulta.",
-      notes: ["B-tree vs GIN", "Índices compostos", "Cursor pagination"] },
-    { title: "Event Sourcing & CQRS", area: "Arquitetura", status: "proximo", progress: 0,
-      summary: "Estado como sequência de eventos imutáveis, com leituras em projeções separadas.",
-      notes: ["Projeções", "Snapshots"] },
-    { title: "Observabilidade com OpenTelemetry", area: "Operação", status: "proximo", progress: 10,
-      summary: "Traces distribuídos para enxergar onde a latência e os erros acontecem.",
-      notes: ["Context propagation", "Sampling"] }
-  ],
+  // ROADMAP — a raiz é a base; cada ramo é uma área, com os tópicos na ordem em que estudo.
+  // status: "concluido" | "andamento" | "proximo"   ·   here: true marca onde eu estou
+  // lab: id de um teste visual (LABS)   ·   keys: termos-chave   ·   refs: referências
+  // notes: anotações { kind: "conceito" | "dica" | "atencao" | "exemplo", title, text, items?, code? }
+  // projects: mini projetos { title, description, shows, stack, status, preview: linhas do terminal, repo?, demo? }
+  roadmap: {
+    tag: "Roadmap", title: "Minha trilha,\n*da raiz até aqui*",
+    sub: "Cada ramo é uma área e cada ponto é um tópico. Abra um tópico para ver as anotações, o teste visual e os mini projetos.",
+    root: { title: "Backend", sub: "a base de tudo" },
+    branches: [
+      { id: "fundamentos", title: "Fundamentos", topics: [
+        { id: "http", title: "HTTP & APIs REST", status: "concluido", progress: 100, since: "2023",
+          summary: "Como cliente e servidor conversam: métodos, status, cabeçalhos e contratos de API.",
+          keys: ["Métodos e semântica", "Status codes", "Cabeçalhos", "Versionamento"],
+          notes: [
+            { kind: "conceito", title: "Semântica antes de rota", text: "O método diz a intenção: GET lê, PUT substitui, PATCH altera parte, DELETE remove, POST cria ou executa uma ação." },
+            { kind: "dica", title: "Erros com corpo padronizado", text: "Use um formato único de erro (ex.: application/problem+json) para o cliente tratar todos os casos do mesmo jeito." }
+          ],
+          projects: [] },
+        { id: "sql", title: "SQL & modelagem", status: "concluido", progress: 100, since: "2023",
+          summary: "Modelar tabelas, relacionamentos e transações que sobrevivem ao crescimento do produto.",
+          keys: ["Normalização", "Transações", "Constraints"], notes: [], projects: [] },
+        { id: "testes", title: "Testes automatizados", status: "concluido", progress: 100, since: "2024",
+          summary: "Testar o comportamento que importa, com unitários rápidos e integração onde há risco.",
+          keys: ["Pirâmide de testes", "Test doubles", "Testcontainers"], notes: [], projects: [] }
+      ] },
+      { id: "dados", title: "Dados", topics: [
+        { id: "indices", title: "Índices e planos de execução", status: "concluido", progress: 100, since: "jun 2026",
+          summary: "Ler EXPLAIN ANALYZE e escolher o índice certo para cada consulta.",
+          keys: ["B-tree vs GIN", "Índices compostos", "Cursor pagination"],
+          notes: [
+            { kind: "conceito", title: "A ordem das colunas importa", text: "Um índice em (cliente_id, criado_em) atende filtros por cliente e ordenação por data, mas não um filtro só por data." },
+            { kind: "exemplo", title: "Paginação por cursor", text: "OFFSET lê e descarta linhas; o cursor continua de onde parou.",
+              code: "SELECT * FROM pedidos\nWHERE (criado_em, id) < ($1, $2)\nORDER BY criado_em DESC, id DESC\nLIMIT 20;" }
+          ],
+          projects: [] },
+        { id: "cache", title: "Cache com Redis", status: "concluido", progress: 100, since: "jul 2026",
+          summary: "Cache-aside, expiração e como evitar que todo mundo recalcule ao mesmo tempo.",
+          keys: ["Cache-aside", "TTL", "Stampede"], notes: [], projects: [] }
+      ] },
+      { id: "confiabilidade", title: "Confiabilidade", topics: [
+        { id: "retry", title: "Retry com backoff", status: "concluido", progress: 100, since: "ago 2026", lab: "retry",
+          summary: "Repetir falhas transitórias sem derrubar o serviço que está tentando se recuperar.",
+          keys: ["Backoff com teto", "Full vs equal jitter", "Erros transitórios"],
+          refs: [{ label: "AWS · Timeouts, retries and backoff with jitter", href: "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/" }],
+          notes: [
+            { kind: "conceito", title: "Só repita o que pode passar", text: "Timeout, 503 e 429 costumam ser transitórios. 400, 401 e 422 vão falhar de novo: repetir só gera carga." },
+            { kind: "atencao", title: "Retry sem idempotência duplica efeitos", text: "Se a primeira tentativa chegou ao servidor, repetir um POST pode cobrar duas vezes. Combine com Idempotency-Key." },
+            { kind: "exemplo", title: "Full jitter", code: "const base = 200, cap = 10_000;\nconst delay = Math.random() * Math.min(cap, base * 2 ** tentativa);" }
+          ],
+          projects: [
+            { title: "fetch-retry", status: "concluido", stack: ["TypeScript", "Vitest"],
+              description: "Wrapper de fetch com backoff exponencial, jitter e orçamento de tentativas.",
+              shows: "Retries espalhados no tempo e limitados a erros transitórios.",
+              preview: ["$ npm test", "✓ repete 503 com backoff", "✓ não repete 422", "✓ respeita Retry-After", "4 passed · 380ms"] }
+          ] },
+        { id: "idempotencia", title: "Idempotência", status: "andamento", progress: 80, since: "set 2026", lab: "idempotencia", here: true,
+          headline: "Idempotência\n*repetir sem duplicar*",
+          summary: "Garantir que repetir uma requisição não repita o efeito: a base para retries seguros em pagamentos e filas.",
+          keys: ["Idempotency-Key", "SET NX atômico", "Dedup em filas", "409 Conflict"],
+          refs: [
+            { label: "IETF · Idempotency-Key HTTP header", href: "https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/" },
+            { label: "Stripe · Idempotent requests", href: "https://docs.stripe.com/api/idempotent_requests" }
+          ],
+          notes: [
+            { kind: "conceito", title: "O que é", text: "Uma operação é idempotente quando executá-la N vezes tem o mesmo efeito que executá-la uma vez. saldo = 100 é; saldo += 100 não é." },
+            { kind: "conceito", title: "A chave representa a intenção", text: "O cliente gera uma Idempotency-Key por pagamento (não por tentativa) e reenvia a mesma chave em todos os retries.",
+              items: ["Primeira vez: reserva a chave e processa", "Repetição concluída: devolve a resposta salva", "Repetição em andamento: responde 409"] },
+            { kind: "exemplo", title: "Reserva atômica no Redis", text: "Checar e depois gravar tem condição de corrida. O SET NX faz as duas coisas em um passo.",
+              code: "const ok = await redis.set(`idem:${key}`, \"processing\", \"NX\", \"EX\", 86400);\nif (!ok) return replayOrConflict(key);" },
+            { kind: "atencao", title: "Mesma chave, corpo diferente", text: "Guarde um hash do payload junto com a chave. Se a mesma chave vier com outro corpo, responda 422: é um bug no cliente." }
+          ],
+          projects: [
+            { title: "pagamentos-idempotentes", status: "andamento", stack: ["Node.js", "Redis", "PostgreSQL"],
+              description: "API de pagamentos de exemplo com Idempotency-Key, reserva atômica e replay da resposta original.",
+              shows: "Enviar a mesma cobrança 5 vezes gera exatamente 1 registro no banco.",
+              preview: ["$ k6 run retry-storm.js", "  requests ......... 500", "  status 200 ....... 100", "  status 409 ....... 400", "✓ cobranças no banco: 100"] },
+            { title: "consumidor-dedup", status: "proximo", stack: ["Node.js", "RabbitMQ"],
+              description: "Consumidor de fila que ignora mensagens repetidas usando uma tabela de mensagens processadas.",
+              shows: "Entrega at-least-once com efeito exactly-once no banco.",
+              preview: ["$ node consumer.js", "→ msg 7f2a processada", "→ msg 7f2a ignorada (duplicada)"] }
+          ] },
+        { id: "circuit", title: "Circuit Breaker", status: "andamento", progress: 60, since: "out 2026", lab: "circuit",
+          summary: "Parar de chamar uma dependência que está falhando e testar a volta com cuidado.",
+          keys: ["Fechado · aberto · meio-aberto", "Fail fast", "Janela deslizante"],
+          refs: [{ label: "Martin Fowler · CircuitBreaker", href: "https://martinfowler.com/bliki/CircuitBreaker.html" }],
+          notes: [
+            { kind: "conceito", title: "Três estados", items: ["Fechado: chamadas passam e falhas são contadas", "Aberto: falha na hora, sem chamar a dependência", "Meio-aberto: deixa passar uma chamada de teste"] },
+            { kind: "dica", title: "Um breaker por dependência", text: "Um breaker global derruba tudo por causa de um serviço só. Isole por dependência (e às vezes por endpoint)." }
+          ],
+          projects: [] },
+        { id: "ratelimit", title: "Rate limiting", status: "andamento", progress: 45, since: "out 2026", lab: "ratelimit",
+          summary: "Permitir rajadas curtas mantendo uma taxa média sustentável por cliente.",
+          keys: ["Token bucket", "Leaky bucket", "Redis + Lua", "Retry-After"],
+          notes: [
+            { kind: "conceito", title: "Token bucket em uma frase", text: "O balde enche a uma taxa fixa até um limite; cada requisição gasta uma ficha; sem ficha, 429." }
+          ],
+          projects: [] }
+      ] },
+      { id: "mensageria", title: "Mensageria", topics: [
+        { id: "outbox", title: "Transactional Outbox", status: "andamento", progress: 30, since: "out 2026",
+          summary: "Gravar no banco e publicar o evento sem perder nenhum dos dois.",
+          keys: ["Dual write", "CDC com Debezium"],
+          notes: [
+            { kind: "atencao", title: "O problema do dual write", text: "Gravar no banco e depois publicar na fila são duas operações: se a segunda falhar, o evento se perde." }
+          ],
+          projects: [] },
+        { id: "eventsourcing", title: "Event Sourcing & CQRS", status: "proximo", progress: 0,
+          summary: "Estado como sequência de eventos imutáveis, com leituras em projeções separadas.",
+          keys: ["Projeções", "Snapshots"], notes: [], projects: [] }
+      ] },
+      { id: "operacao", title: "Operação", topics: [
+        { id: "otel", title: "Observabilidade com OpenTelemetry", status: "proximo", progress: 10,
+          summary: "Traces distribuídos para enxergar onde a latência e os erros acontecem.",
+          keys: ["Context propagation", "Sampling"], notes: [], projects: [] },
+        { id: "slo", title: "SLOs e alertas", status: "proximo", progress: 0,
+          summary: "Definir o que é 'funcionando' em números e alertar só quando o usuário sente.",
+          keys: ["SLI", "Error budget", "Burn rate"], notes: [], projects: [] }
+      ] }
+    ]
+  },
 
   // level: 1 Explorando · 2 Básico · 3 Intermediário · 4 Avançado · 5 Domino
   skillsHead: { tag: "Habilidades", title: "O que eu\n*sei fazer*", sub: "Uma autoavaliação honesta, com onde cada coisa foi usada na prática." },
@@ -785,6 +1000,7 @@ const ICONS = {
   key: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14.5 8.5l2 2"/></svg>',
   wave: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 12h3l2-6 4 12 3-9 2 3h4"/></svg>',
   bucket: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M4 8h16l-2 12H6z"/><circle cx="10" cy="14" r="1.3"/><circle cx="14" cy="14" r="1.3"/><path d="M12 2v3"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>',
   copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>'
 };
 
@@ -840,8 +1056,15 @@ const initials = t => {
 };
 
 /* ════════════════════════════ Abas ════════════════════════════ */
-const TABS = [["inicio", "Início"], ["sobre", "Sobre mim"], ["estudos", "Estudando"], ["stack", "Sei fazer"], ["resolvo", "Resolvo"], ["lab", "Laboratório"]];
+const TABS = [["inicio", "Início"], ["roadmap", "Roadmap"], ["sobre", "Sobre mim"], ["stack", "Sei fazer"], ["resolvo", "Resolvo"]];
 const STATUS = { andamento: "Em andamento", concluido: "Concluído", proximo: "Próximo" };
+
+// tópicos do roadmap em lista única, na ordem da trilha
+const RM = DATA.roadmap;
+const TOPICS = RM.branches.flatMap(b => b.topics.map(t => ({ ...t, area: b.title, branch: b.id })));
+const HERE = TOPICS.find(t => t.here) || TOPICS.find(t => t.status === "andamento") || TOPICS[0];
+const topicById = id => TOPICS.find(t => t.id === id);
+const branchState = b => b.topics.every(t => t.status === "concluido") ? "done" : b.topics.some(t => t.status !== "proximo") ? "doing" : "next";
 const LEVELS = ["", "Explorando", "Básico", "Intermediário", "Avançado", "Domino"];
 
 /* ═══════════════════════════ Home: diagramas ═══════════════════════════ */
@@ -857,7 +1080,7 @@ function markSVG(x, y, s = 26) {
 }
 
 function flowCard() {
-  const topics = DATA.studies.filter(s => s.status !== "proximo").slice(0, FLOW.spots.length);
+  const topics = TOPICS.filter(s => s.status !== "proximo").slice(-FLOW.spots.length);
   const rays = [-62, -38, -14, 14, 38, 62].map(a => {
     const r = d => d * Math.PI / 180;
     return `<path d="M320,110 L${320 + Math.sin(r(a)) * 260},${110 - Math.cos(r(a)) * 260} L${320 + Math.sin(r(a + 7)) * 260},${110 - Math.cos(r(a + 7)) * 260}Z" fill="url(#fRays)" opacity=".5"/>`;
@@ -1027,13 +1250,13 @@ function mountHome() {
 /* ═══════════════════════════ Views ═══════════════════════════ */
 function viewHome() {
   const p = DATA.profile;
-  const active = DATA.studies.filter(s => s.status === "andamento");
-  const focus = active.find(s => s.lab) || active[0];
+  const active = TOPICS.filter(s => s.status === "andamento");
+  const focus = HERE;
   const stats = [
-    [DATA.studies.filter(s => s.status !== "proximo").length, "tópicos estudados"],
+    [TOPICS.filter(s => s.status !== "proximo").length, "tópicos estudados"],
     [active.length, "em andamento agora"],
-    [DATA.skills.reduce((n, g) => n + g.items.length, 0), "habilidades mapeadas"],
-    [Object.keys(LABS).length, "laboratórios interativos"]
+    [TOPICS.reduce((n, t) => n + (t.projects?.length || 0), 0), "mini projetos"],
+    [TOPICS.filter(t => t.lab && LABS[t.lab]).length, "testes visuais"]
   ];
   return `<div class="sec">
   <div class="hero">
@@ -1041,8 +1264,8 @@ function viewHome() {
     <h1 class="h1 rv">${richTitle(p.headline)}</h1>
     <p class="lede rv">${esc(p.sub)}</p>
     <div class="actions rv">
-      <a class="btn primary" href="#lab/${focus?.lab || "idempotencia"}">Abrir laboratório ${ICONS.arrow}</a>
-      <a class="btn" href="#estudos">O que estou estudando</a>
+      <a class="btn primary" href="#roadmap">Ver meu roadmap ${ICONS.arrow}</a>
+      <a class="btn" href="#roadmap/${HERE.id}">Onde estou agora</a>
     </div>
     <div class="links rv">${p.links.map(l => `<a href="${esc(l.href)}">${esc(l.label)} ↗</a>`).join("")}</div>
   </div>
@@ -1057,7 +1280,7 @@ function viewHome() {
         <span class="eyebrow">Foco agora · ${esc(focus.area)}</span>
         <h3 style="font-size:18px;letter-spacing:-.015em">${esc(focus.title)}</h3>
         <p>${esc(focus.summary)}</p>
-        ${focus.lab ? `<a class="go" style="margin-top:4px" href="#lab/${focus.lab}">Ver demonstração ${ICONS.arrow}</a>` : ""}
+        <a class="go" style="margin-top:4px" href="#roadmap/${focus.id}">Abrir tópico ${ICONS.arrow}</a>
       </div>`, { card: "focus" }) : ""}
     ${frame(`<span class="eyebrow">Aprendido recentemente</span>
       <ul class="tl">${DATA.timeline.map(t => `<li><time>${esc(t.date)}</time>${esc(t.text)}</li>`).join("")}</ul>`)}
@@ -1091,26 +1314,213 @@ function viewAbout() {
   </div></div>`;
 }
 
-function viewStudies() {
-  const count = s => DATA.studies.filter(x => !s || x.status === s).length;
-  return `<div class="sec">${head(DATA.studiesHead)}
-  <div class="filters rv" id="studyFilters">
-    <button class="chip" aria-pressed="true" data-f="">Todos · ${count()}</button>
-    <button class="chip" aria-pressed="false" data-f="andamento">Em andamento · ${count("andamento")}</button>
-    <button class="chip" aria-pressed="false" data-f="concluido">Concluídos · ${count("concluido")}</button>
-    <button class="chip" aria-pressed="false" data-f="proximo">Próximos · ${count("proximo")}</button>
+/* ─────────── Roadmap: mapa em árvore ─────────── */
+function leafHTML(t) {
+  const here = t.id === HERE.id;
+  const extra = [t.lab && LABS[t.lab] ? "teste visual" : "", t.projects?.length ? `${t.projects.length} proj.` : ""].filter(Boolean).join(" · ");
+  return `<a class="leaf rv${here ? " here" : ""}" href="#roadmap/${t.id}" data-s="${t.status}" data-topic="${t.id}">
+    ${here ? `<span class="here-tag"><span class="live"></span>você está aqui</span>` : ""}
+    <span class="leaf-pin"></span>
+    <span class="leaf-tx"><b>${esc(t.title)}</b>
+      <span class="leaf-meta"><span class="bar"><i style="--w:${t.progress}%"></i></span><span>${t.progress}%${extra ? ` · ${extra}` : ""}</span></span></span>
+  </a>`;
+}
+
+function viewRoadmap() {
+  const done = TOPICS.filter(t => t.status === "concluido").length;
+  const rows = RM.branches.map((b, i) => {
+    const n = b.topics.filter(t => t.status === "concluido").length;
+    return `<div class="rm-row ${i % 2 ? "l" : "r"}" data-b="${b.id}">
+      <div class="rm-hub rv ${branchState(b)}"><span class="rm-knot"></span><span class="rm-label"><b>${esc(b.title)}</b><small>${n}/${b.topics.length} concluídos</small></span></div>
+      <div class="rm-leaves">${b.topics.map(leafHTML).join("")}</div>
+    </div>`;
+  }).join("");
+  return `<div class="sec">
+  <div id="rmMap">${head(RM)}
+    <div class="rm-top rv">
+      <div class="rm-where"><span class="eyebrow">Onde estou</span>
+        <span>${esc(HERE.area)} › <b>${esc(HERE.title)}</b> · ${HERE.progress}%</span>
+        <a class="go" href="#roadmap/${HERE.id}">Abrir ${ICONS.arrow}</a></div>
+      <div class="rm-total"><span>${done} de ${TOPICS.length} tópicos concluídos</span><div class="bar"><i style="--w:${done / TOPICS.length * 100}%"></i></div></div>
+      <div class="legend-rm"><span><i class="lg"></i>concluído</span><span><i class="lg a"></i>em andamento</span><span><i class="lg p"></i>próximo</span></div>
+    </div>
+    <div class="rmap rv" id="rmap">
+      <svg class="rm-wires" aria-hidden="true"></svg>
+      <div class="rm-row root"><div class="rm-root"><span class="rm-seed">${esc(DATA.profile.initials)}</span><span class="rm-label"><b>${esc(RM.root.title)}</b><small>${esc(RM.root.sub)}</small></span></div></div>
+      ${rows}
+    </div>
   </div>
-  <div class="grid-3">
-    ${DATA.studies.map(s => frame(`
-      <div class="study-top"><span class="eyebrow">${esc(s.area)}</span><span class="badge ${s.status}">${STATUS[s.status]}</span></div>
-      <h3>${esc(s.title)}</h3>
-      <p>${esc(s.summary)}</p>
-      <div class="bar-row"><div class="bar"><i style="--w:${s.progress}%"></i></div><span>${String(s.progress).padStart(3, " ")}%</span></div>
-      <ul class="notes">${s.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>
-      <div class="study-foot"><span>${s.since ? "desde " + esc(s.since) : "na fila"}</span>
-        ${s.lab ? `<a class="go" href="#lab/${s.lab}">Laboratório ${ICONS.arrow}</a>` : ""}</div>`,
-      { card: "study", attrs: `data-s="${s.status}"` })).join("")}
-  </div></div>`;
+  <div class="topic" id="topicPage" hidden></div></div>`;
+}
+
+// centro de um elemento em coordenadas do mapa (ignora transforms da animação de entrada)
+function posIn(el, root) {
+  let x = el.offsetWidth / 2, y = el.offsetHeight / 2;
+  while (el && el !== root) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
+  return { x, y };
+}
+
+// desenha as raízes: tronco ligando os ramos e curvas até cada tópico; destaca o caminho até "onde estou"
+function drawMap() {
+  const map = $("#rmap");
+  if (!map || !map.offsetWidth) return;
+  const svg = $(".rm-wires", map), P = el => posIn(el, map);
+  svg.setAttribute("viewBox", `0 0 ${map.offsetWidth} ${map.offsetHeight}`);
+  const curve = (a, b) => Math.abs(b.x - a.x) < 80
+    ? ` C${a.x},${b.y} ${a.x},${b.y} ${b.x},${b.y}`
+    : ` C${(a.x + b.x) / 2},${a.y} ${(a.x + b.x) / 2},${b.y} ${b.x},${b.y}`;
+  let prev = P($(".rm-seed", map)), html = "", route = `M${prev.x},${prev.y}`, reached = true;
+  RM.branches.forEach(b => {
+    const row = $(`.rm-row[data-b="${b.id}"]`, map), k = P($(".rm-knot", row));
+    html += `<path class="${branchState(b) === "next" ? "w-next" : "w-done"}" d="M${prev.x},${prev.y} L${k.x},${k.y}"/>`;
+    if (reached) route += ` L${k.x},${k.y}`;
+    b.topics.forEach(t => {
+      const d = curve(k, P($(`[data-topic="${t.id}"] .leaf-pin`, row)));
+      html += `<path class="w-${t.status === "concluido" ? "done" : t.status === "andamento" ? "doing" : "next"}" d="M${k.x},${k.y}${d}"/>`;
+      if (t.id === HERE.id) { route += d; reached = false; }
+    });
+    prev = k;
+  });
+  svg.innerHTML = html + `<path class="w-route" pathLength="1" d="${route}"/>`;
+
+  map._pkt?.remove();
+  if (REDUCED) return;
+  const p = document.createElement("i");
+  p.className = "rm-pkt";
+  p.style.offsetPath = `path("${route}")`;
+  map.appendChild(p);
+  map._pkt = p;
+  p.animate([
+    { offsetDistance: "0%", opacity: 0 }, { opacity: 1, offset: .06 },
+    { offsetDistance: "100%", opacity: 1, offset: .78 }, { offsetDistance: "100%", opacity: 0 }
+  ], { duration: 4600, delay: 1200, iterations: Infinity, easing: "cubic-bezier(.45,0,.3,1)" });
+}
+
+/* ─────────── Roadmap: página do tópico ─────────── */
+const KINDS = { conceito: "Conceito", dica: "Dica", atencao: "Atenção", exemplo: "Exemplo" };
+const PANES = ["notas", "teste", "projetos"];
+
+const emptyBox = (title, hint) => `<div class="empty-box rv"><b>${title}</b><span>${hint}</span></div>`;
+
+function topicHTML(t) {
+  const b = RM.branches.find(x => x.id === t.branch);
+  const i = TOPICS.indexOf(t), prev = TOPICS[i - 1], next = TOPICS[i + 1];
+  const hasLab = t.lab && LABS[t.lab];
+  return `
+  <div class="tp-bar rv"><a class="btn" href="#roadmap">${ICONS.back} Roadmap</a>
+    <span class="crumbs">Roadmap <span>/</span> ${esc(t.area)} <span>/</span> <b>${esc(t.title)}</b></span></div>
+  <div class="tp-head">
+    <div class="tp-intro rv">
+      <div class="tp-tags"><span class="tag">${esc(t.area)}</span><span class="badge ${t.status}">${STATUS[t.status]}</span>${t.id === HERE.id ? `<span class="badge here-b">você está aqui</span>` : ""}</div>
+      <h2 class="h2">${richTitle(t.headline || t.title)}</h2>
+      <p class="sub">${esc(t.summary)}</p>
+      <div class="bar-row"><div class="bar"><i style="--w:${t.progress}%"></i></div><span>${t.progress}%</span><span>${t.since ? "desde " + esc(t.since) : "na fila"}</span></div>
+    </div>
+    ${frame(`<span class="eyebrow">Ramo · ${esc(b.title)}</span>
+      <div class="trail">${b.topics.map(x => `<a href="#roadmap/${x.id}" data-s="${x.status}"${x.id === t.id ? ' aria-current="page"' : ""}><i></i><span>${esc(x.title)}</span></a>`).join("")}</div>`, { cls: "tp-trail" })}
+  </div>
+  <div class="tp-tabs rv"><div class="seg" role="tablist" id="tpTabs">
+    <button data-pane="notas">Anotações <span class="cnt">${t.notes?.length || 0}</span></button>
+    <button data-pane="teste">Teste visual <span class="cnt">${hasLab ? "●" : "–"}</span></button>
+    <button data-pane="projetos">Mini projetos <span class="cnt">${t.projects?.length || 0}</span></button>
+  </div></div>
+  <div class="tp-pane" id="tpPane"></div>
+  <nav class="tp-nav">
+    ${prev ? `<a href="#roadmap/${prev.id}"><small>← anterior</small><b>${esc(prev.title)}</b></a>` : "<span></span>"}
+    ${next ? `<a class="nx" href="#roadmap/${next.id}"><small>próximo →</small><b>${esc(next.title)}</b></a>` : ""}
+  </nav>`;
+}
+
+function notesHTML(t) {
+  const notes = t.notes || [];
+  const list = notes.length ? notes.map((n, i) => frame(`
+      <div class="study-top"><span class="eyebrow">${String(i + 1).padStart(2, "0")} · ${KINDS[n.kind] || "Nota"}</span>${n.kind === "atencao" ? '<span class="badge warn">atenção</span>' : ""}</div>
+      <h3>${esc(n.title)}</h3>
+      ${n.text ? `<p>${esc(n.text)}</p>` : ""}
+      ${n.items ? `<ul class="note-ul">${n.items.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+      ${n.code ? `<pre class="mini-code">${highlight(n.code)}</pre>` : ""}`, { card: "note " + (n.kind || "") })).join("")
+    : emptyBox("Ainda sem anotações", "Elas entram em DATA.roadmap, no campo notes deste tópico.");
+  return `<div class="notes-wrap"><div class="note-list">${list}</div>
+    <aside class="note-aside">${frame(`<span class="eyebrow">Termos-chave</span>
+      <ul class="notes">${(t.keys || []).map(k => `<li>${esc(k)}</li>`).join("")}</ul>
+      ${t.refs?.length ? `<span class="eyebrow" style="margin-top:6px">Referências</span>
+        <ul class="refs">${t.refs.map(r => `<li><a href="${esc(r.href)}" target="_blank" rel="noopener">${esc(r.label)} ↗</a></li>`).join("")}</ul>` : ""}`)}</aside></div>`;
+}
+
+function projectsHTML(t) {
+  const ps = t.projects || [];
+  if (!ps.length) return emptyBox("Nenhum mini projeto ainda", "Quando houver, ele aparece aqui com o que demonstra, a stack e os links.");
+  const tone = l => l.startsWith("$") ? "cmd" : l.startsWith("✓") ? "ok" : l.startsWith("✕") ? "err" : "";
+  return `<div class="grid-2">${ps.map(p => {
+    const st = p.status || "concluido";
+    const links = [p.repo && `<a class="go" href="${esc(p.repo)}" target="_blank" rel="noopener">Código ${ICONS.arrow}</a>`,
+      p.demo && `<a class="go" href="${esc(p.demo)}" target="_blank" rel="noopener">Demo ${ICONS.arrow}</a>`].filter(Boolean).join("");
+    return frame(`
+      <div class="proj-prev"><div class="dots"><i></i><i></i><i></i><span>${esc(p.title)}</span></div>
+        ${(p.preview || []).map((l, i) => `<span class="${tone(l)}" style="--i:${i}">${esc(l)}</span>`).join("")}</div>
+      <div class="study-top"><span class="eyebrow">Mini projeto</span><span class="badge ${st}">${STATUS[st]}</span></div>
+      <h3>${esc(p.title)}</h3><p>${esc(p.description)}</p>
+      ${p.shows ? `<div class="proj-shows"><span class="eyebrow">O que demonstra</span>${esc(p.shows)}</div>` : ""}
+      <div class="tags" style="margin-top:0">${(p.stack || []).map(s => `<span class="chip">${esc(s)}</span>`).join("")}</div>
+      <div class="proj-links">${links || '<span class="soon">links em breve</span>'}</div>`, { card: "proj" });
+  }).join("")}</div>`;
+}
+
+let currentTopic = null, currentPane = null, labCleanup = null;
+
+function openTopic(id, pane) {
+  const t = topicById(id);
+  if (!t) return closeTopic();
+  const page = $("#topicPage");
+  if (currentTopic !== id) {
+    stopLab();
+    currentTopic = id; currentPane = null;
+    page.innerHTML = topicHTML(t);
+    $("#rmMap").hidden = true;
+    page.hidden = false;
+    scrollTo({ top: 0, behavior: "auto" });
+    reveal(page);
+  }
+  showPane(t, PANES.includes(pane) ? pane : currentPane || "notas");
+}
+
+function showPane(t, pane) {
+  if (pane === currentPane) return;
+  stopLab();
+  currentPane = pane;
+  $$("#tpTabs [data-pane]").forEach(b => b.setAttribute("aria-pressed", b.dataset.pane === pane));
+  const el = $("#tpPane");
+  if (pane === "teste" && t.lab && LABS[t.lab]) {
+    el.innerHTML = `<div class="lab-pane">${LABS[t.lab].html()}</div>`;
+    const lp = $(".lab-pane", el);
+    labCleanup = LABS[t.lab].mount(lp) || (() => {});
+    $$(".stage", lp).forEach(wireStage);
+  } else {
+    el.innerHTML = pane === "teste" ? emptyBox("Teste visual em construção", "Este tópico ainda não tem uma simulação interativa.")
+      : pane === "projetos" ? projectsHTML(t) : notesHTML(t);
+  }
+  reveal(el);
+}
+
+function stopLab() {
+  if (labCleanup) labCleanup();
+  labCleanup = null;
+  const lp = $(".lab-pane");
+  if (lp) lp.innerHTML = "";
+}
+
+function closeTopic(focusLeaf) {
+  stopLab();
+  if (!currentTopic) return;
+  const last = currentTopic;
+  currentTopic = currentPane = null;
+  const page = $("#topicPage");
+  page.hidden = true;
+  page.innerHTML = "";
+  $("#rmMap").hidden = false;
+  drawMap();
+  reveal($("#rmMap"));
+  if (focusLeaf) $(`[data-topic="${last}"]`)?.scrollIntoView({ block: "center" });
 }
 
 function viewStack() {
@@ -1143,15 +1553,6 @@ function viewCases() {
     </div></div></div>`, { cls: "case" + (i === 0 ? " open" : "") })).join("")}</div></div>`;
 }
 
-function viewLab() {
-  return `<div class="sec"><div class="lab-layout">
-    <nav class="lab-nav" id="labNav">${frame(`
-      <div class="lab-nav-title eyebrow">Laboratórios</div>
-      ${Object.entries(LABS).map(([id, l]) => `<a href="#lab/${id}" data-lab="${id}"><span class="ico">${ICONS[l.icon]}</span><span><b>${l.name}</b><small>${l.area}</small></span></a>`).join("")}`)}
-    </nav>
-    <div id="labPanel"></div>
-  </div></div>`;
-}
 
 /* ═════════════════════════ Simulação: palco ═════════════════════════ */
 function centerOf(el, stage) {
@@ -1380,6 +1781,7 @@ const LABS = {
         flash(N.db, dup ? "err" : "ok");
         log.add("banco", dup ? "err" : "ok", dup ? "nova cobrança — duplicada!" : "cobrança criada");
         await travel(st, N.db, N.api, { label: "ok", tone: "ok", dur: 600 });
+        if (!st.isConnected) return {};
         if (k) { store.set(key, { status: "salvo", fresh: true }); renderStore(); log.add("redis", "ok", `SET ${key} = resposta 201`); }
         const r = await travel(st, N.api, N.client, { label: "201 Created", tone: "ok", drop });
         if (r.dropped) { flash(N.client, "err"); log.add("rede", "err", "resposta perdida · cliente não sabe se foi cobrado"); return { timeout: true }; }
@@ -1737,7 +2139,7 @@ function reveal(root) {
 
 /* ═══════════════════════════ Navegação ═══════════════════════════ */
 const app = $("#app");
-let currentTab = null, currentLab = null, labCleanup = null;
+let currentTab = null;
 
 function build() {
   const p = DATA.profile;
@@ -1745,7 +2147,7 @@ function build() {
   $("#brandName").textContent = p.name;
   $("#tabs").insertAdjacentHTML("beforeend", TABS.map(([id, l]) =>
     `<button class="tab" role="tab" id="tab-${id}" aria-selected="false" aria-controls="view-${id}" data-tab="${id}">${l}</button>`).join(""));
-  const renders = { inicio: viewHome, sobre: viewAbout, estudos: viewStudies, stack: viewStack, resolvo: viewCases, lab: viewLab };
+  const renders = { inicio: viewHome, sobre: viewAbout, stack: viewStack, resolvo: viewCases, roadmap: viewRoadmap };
   app.innerHTML = TABS.map(([id]) => `<section class="view" id="view-${id}" role="tabpanel" aria-labelledby="tab-${id}" data-view="${id}">${renders[id]()}</section>`).join("");
 
   $("#tabs").addEventListener("click", e => { const b = e.target.closest(".tab"); if (b) go(b.dataset.tab); });
@@ -1755,17 +2157,12 @@ function build() {
     go(TABS[n][0]); $("#tab-" + TABS[n][0]).focus();
   });
 
-  // filtros de estudo
-  $("#studyFilters").addEventListener("click", e => {
-    const b = e.target.closest(".chip"); if (!b) return;
-    $$("#studyFilters .chip").forEach(c => c.setAttribute("aria-pressed", c === b));
-    let k = 0;
-    $$("#view-estudos .frame[data-s]").forEach(s => {
-      const show = !b.dataset.f || s.dataset.s === b.dataset.f;
-      s.classList.toggle("hide", !show);
-      if (show) { s.classList.remove("in"); s.style.transitionDelay = (k++ * 60) + "ms"; void s.offsetWidth; s.classList.add("in"); }
-    });
+  // roadmap: abas do tópico e redesenho das raízes quando o mapa muda de tamanho
+  $("#view-roadmap").addEventListener("click", e => {
+    const b = e.target.closest("[data-pane]");
+    if (b && currentTopic) go("roadmap", currentTopic, b.dataset.pane);
   });
+  new ResizeObserver(() => drawMap()).observe($("#rmap"));
 
   // casos (acordeão)
   $$(".case-btn").forEach(b => b.onclick = () => {
@@ -1781,12 +2178,12 @@ function build() {
     }).catch(() => {});
   });
 
-  // links internos (#aba ou #lab/id) navegam via JS, sem alterar a URL
+  // links internos (#aba, #roadmap/tópico/painel ou #lab/id) navegam via JS, sem alterar a URL
   document.addEventListener("click", e => {
     const a = e.target.closest('a[href^="#"]'); if (!a) return;
     e.preventDefault();
-    const [tab, sub] = a.getAttribute("href").slice(1).split("/");
-    if (tab) go(tab, sub);
+    const [tab, sub, pane] = a.getAttribute("href").slice(1).split("/");
+    if (tab) go(tab, sub, pane);
   });
 
   addEventListener("resize", moveInd);
@@ -1801,9 +2198,15 @@ function moveInd() {
   ind.style.transform = `translateX(${b.offsetLeft - 3}px)`;
 }
 
-function go(tab0, sub) {
+function go(tab0, sub, pane) {
+  // links antigos de laboratório abrem o teste visual do tópico correspondente
+  if (tab0 === "lab") {
+    const t = TOPICS.find(x => x.lab === sub) || TOPICS.find(x => x.lab);
+    return go("roadmap", t?.id, "teste");
+  }
   const tab = TABS.some(([id]) => id === tab0) ? tab0 : "inicio";
-  if (tab !== currentTab) {
+  const changed = tab !== currentTab;
+  if (changed) {
     $$(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.tab === tab));
     $$(".view").forEach(v => v.classList.remove("active"));
     const v = $(`.view[data-view="${tab}"]`);
@@ -1812,28 +2215,12 @@ function go(tab0, sub) {
     moveInd();
     $(`.tab[data-tab="${tab}"]`).scrollIntoView({ block: "nearest", inline: "nearest" });
     scrollTo({ top: 0, behavior: "auto" });
+    if (tab === "roadmap") drawMap();
     reveal(v);
     if (tab === "inicio") countUp();
   }
-  if (tab === "lab") openLab(LABS[sub] ? sub : currentLab || "idempotencia");
-  else closeLab();
-}
-
-function openLab(id) {
-  if (id === currentLab && labCleanup !== null) return;
-  closeLab();
-  currentLab = id;
-  $$("#labNav a").forEach(a => a.dataset.lab === id ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
-  const panel = $("#labPanel");
-  panel.innerHTML = LABS[id].html();
-  labCleanup = LABS[id].mount(panel) || (() => {});
-  $$(".stage", panel).forEach(wireStage);
-  reveal(panel);
-}
-function closeLab() {
-  if (labCleanup) labCleanup();
-  labCleanup = null;
-  if (currentTab !== "lab") { const p = $("#labPanel"); if (p) p.innerHTML = ""; }
+  if (tab === "roadmap" && sub) openTopic(sub, pane);
+  else closeTopic(tab === "roadmap" && !changed);
 }
 
 function countUp() {
@@ -1855,7 +2242,7 @@ function countUp() {
   };
 })();
 
-document.fonts?.ready.then(() => { moveInd(); $$("#labPanel .stage").forEach(wireStage); });
+document.fonts?.ready.then(() => { moveInd(); drawMap(); $$(".lab-pane .stage").forEach(wireStage); });
 build();
 </script>
 </body>
