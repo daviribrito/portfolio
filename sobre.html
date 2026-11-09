@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sobre mim, Davi Brito</title>
+  <meta name="description" content="Quem é Davi Brito: trajetória, como começou no backend, feitos e o que procura.">
+  <meta name="theme-color" content="#0b0b0b">
+  <script>try{var t=localStorage.getItem("tema");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="sobre">
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">DB</span>Davi Brito</a>
+      <nav class="tabs" aria-label="Principal">
+        <span class="tab-ind" aria-hidden="true"></span>
+        <a class="tab" href="index.html">Início</a>
+        <a class="tab" href="roadmap.html">Roadmap</a>
+        <a class="tab" href="sobre.html" aria-current="page">Sobre mim</a>
+        <a class="tab" href="commits.html">Commits</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="sec" aria-labelledby="titulo">
+      <div class="head">
+        <span class="tag rv">Sobre mim</span>
+        <h1 class="h2 rv" id="titulo">Quem está <span>por trás do código</span></h1>
+        <p class="sub rv">Um pouco da minha história, de como eu penso e do que eu procuro.</p>
+      </div>
+
+      <div class="about">
+        <div class="frame rv" data-corners>
+          <div class="card">
+            <div class="id-top">
+              <div class="monogram" aria-hidden="true">DB</div>
+              <div><b data-nome>Davi Brito</b><span data-cargo>Desenvolvedor backend</span></div>
+            </div>
+            <dl class="meta" data-facts></dl>
+            <div class="chips">
+              <a class="chip" data-link="github" href="#" target="_blank" rel="noopener" data-icon-after="ext">GitHub</a>
+              <a class="chip" data-link="linkedin" href="#" target="_blank" rel="noopener" data-icon-after="ext">LinkedIn</a>
+              <a class="chip" data-link="email" href="#" data-icon-after="ext">Contato</a>
+            </div>
+          </div>
+        </div>
+        <div class="frame rv" data-corners>
+          <div class="card bio">
+            <span class="eyebrow">Quem sou</span>
+            <div data-story></div>
+            <blockquote class="quote" data-quote></blockquote>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="sub-head">
+          <h2 class="h3">Trajetória <span>como cheguei até aqui</span></h2>
+          <p>Comecei com scripts de automação e fui descendo de camada até chegar no que acontece quando a produção falha.</p>
+        </div>
+        <div class="frame rv" data-corners><div class="card"><ol class="journey" data-timeline></ol></div></div>
+      </div>
+
+      <div class="block">
+        <div class="sub-head">
+          <h2 class="h3">Feitos <span>projetos e conquistas</span></h2>
+        </div>
+        <div class="grid-3" data-feats></div>
+      </div>
+
+      <div class="block">
+        <div class="sub-head">
+          <h2 class="h3">O que me move</h2>
+        </div>
+        <div class="grid-3" data-values></div>
+      </div>
+
+      <div class="block grid-2">
+        <div class="frame rv" data-corners><div class="card"><span class="eyebrow">Ferramentas do dia a dia</span><div class="chips" data-stack></div></div></div>
+        <div class="frame rv" data-corners><div class="card"><span class="eyebrow">Fora do código</span><div class="chips" data-hobbies></div></div></div>
+      </div>
+
+      <div class="block">
+        <div class="frame rv" id="contato" data-corners>
+          <div class="card" style="align-items:center;text-align:center;padding:clamp(28px,5vw,48px)">
+            <span class="eyebrow">O que procuro</span>
+            <p class="lede" data-procuro></p>
+            <div class="actions">
+              <a class="btn primary" data-link="email" href="#" data-icon-after="arrow">Vamos conversar</a>
+              <a class="btn" data-link="linkedin" href="#" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>© <span data-year></span> Davi Ribeiro Brito</span>
+      <a href="roadmap.html">Ver o que estou estudando</a>
+    </div>
+  </footer>
+
+  <script src="data/config.js"></script>
+  <script src="data/sobre.js"></script>
+  <script src="js/site.js"></script>
+  <script src="js/pages.js"></script>
+</body>
+</html>
