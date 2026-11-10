@@ -1,7 +1,7 @@
 /*
  * Laboratórios animados do roadmap.
  * Cada demonstração é uma simulação didática (dados sintéticos), não um sistema real.
- * Uso: Demos.mount(elemento, "idempotencia" | "retry" | "circuit" | "ratelimit" | "outbox", { tour })
+ * Uso: Demos.mount(elemento, "idempotencia" | "retry" | "circuit" | "ratelimit" | "outbox" | "pipeline", { tour })
  */
 (function () {
   "use strict";
@@ -576,7 +576,154 @@
     });
   }
 
-  const REGISTRY = { idempotencia, retry, circuit, ratelimit, outbox };
+  /* ------------------------------------------------------------------ */
+  /* Pipeline de CI/CD: os testes barram o bug antes do deploy           */
+  /* ------------------------------------------------------------------ */
+  function pipeline(root, opts) {
+    const STAGES = [
+      { id: "push", label: "Push", sub: "git push" },
+      { id: "lint", label: "Lint", sub: "eslint" },
+      { id: "testes", label: "Testes", sub: "unit + integração" },
+      { id: "build", label: "Build", sub: "imagem Docker" },
+      { id: "deploy", label: "Deploy", sub: "produção" }
+    ];
+    const TESTS = [
+      "calcula o total do carrinho",
+      "rejeita cupom expirado",
+      "aplica o cupom uma vez só",
+      "salva o pedido no banco"
+    ];
+
+    return createLab(root, {
+      question: "Um commit com um bug no cupom de desconto é enviado. Até onde ele chega?",
+      modesLabel: "Pipeline",
+      modes: [
+        { id: "sem", label: "Sem testes" },
+        { id: "com", label: "Com testes no CI" }
+      ],
+      async run(ctx, g) {
+        const sem = ctx.mode === "sem";
+        const svg = scene(ctx, 960, 340, "Simulação: pipeline de CI/CD com push, lint, testes, build e deploy");
+        const W = 150, H = 84, Y = 34, GAP = (960 - 40 - W * 5) / 4;
+        const nodes = STAGES.map((st, i) => {
+          const x = 20 + i * (W + GAP);
+          if (i) s("path", { d: "M" + (x - GAP) + " " + (Y + H / 2) + " H" + x, class: "wire" + (sem && st.id === "testes" ? " dim" : "") }, svg);
+          const n = box(svg, { x, y: Y, w: W, h: H, label: st.label, sub: sem && st.id === "testes" ? "nenhum teste" : st.sub });
+          if (sem && st.id === "testes") n.g.classList.add("dim");
+          return n;
+        });
+        const at = (i, side) => [side === "in" ? nodes[i].x : nodes[i].x + W, Y + H / 2];
+        const T = nodes[2], D = nodes[4];
+
+        // Lista de testes embaixo da etapa Testes; usuários embaixo do Deploy.
+        const testG = s("g", { class: sem ? "dim" : "" }, svg);
+        s("rect", { x: T.x - 70, y: 150, width: W + 140, height: 160, rx: 14, class: "node" }, testG);
+        s("text", { x: T.x - 52, y: 178, class: "t-label", text: "Suíte de testes" }, testG);
+        if (sem) s("text", { x: T.x - 52, y: 206, class: "t-mono", text: "o projeto não tem testes" }, testG);
+        const testRows = rows(testG, T.x - 52, 206, 24);
+
+        s("rect", { x: D.x - 70, y: 150, width: W + 70, height: 160, rx: 14, class: "node" }, svg);
+        s("text", { x: D.x - 52, y: 178, class: "t-label", text: "Produção" }, svg);
+        const prodRows = rows(svg, D.x - 52, 206, 24);
+
+        const commitTxt = s("text", { x: nodes[0].cx, y: Y + H + 26, "text-anchor": "middle", class: "t-mono", text: "" }, svg);
+
+        async function stage(i, cls, ms) {
+          setNode(nodes[i], "active");
+          ctx.verdict("Etapa: " + STAGES[i].label, sem ? "Pipeline sem testes" : "Pipeline com testes");
+          await ctx.sleep(ms, g);
+          setNode(nodes[i], cls);
+        }
+        async function hop(i, cls) { await ctx.travel(svg, at(i, "out"), at(i + 1, "in"), cls || "", 520, g); }
+        function reset() { nodes.forEach((n) => setNode(n)); }
+
+        async function runTests(withBug) {
+          setNode(T, "active");
+          ctx.verdict("Etapa: Testes", "Rodando a suíte");
+          const shown = [];
+          for (let k = 0; k < TESTS.length; k++) {
+            const fails = withBug && k === 2;
+            await ctx.sleep(420, g);
+            shown.push(testRows.add((fails ? "✗ " : "✓ ") + TESTS[k], fails ? "r-fail" : "r-ok"));
+            ctx.log((fails ? "FALHOU  " : "passou  ") + TESTS[k], fails ? "fail" : "ok");
+          }
+          return shown;
+        }
+
+        // 1º push: commit com bug
+        commitTxt.textContent = "a1f9c3e  cupom de desconto";
+        ctx.log("Dev faz push do commit a1f9c3e (com um bug: o cupom é aplicado duas vezes)", "info");
+        await stage(0, "ok", 400);
+        await hop(0);
+        ctx.log("Lint: nenhum problema de estilo", "ok");
+        await stage(1, "ok", 500);
+
+        if (sem) {
+          await ctx.travel(svg, at(1, "out"), at(3, "in"), "", 900, g);
+          ctx.log("Sem testes: o pipeline segue direto para o build", "wait");
+          await stage(3, "ok", 500);
+          ctx.log("Build: imagem gerada", "ok");
+          await hop(3);
+          await stage(4, "ok", 600);
+          ctx.log("Deploy em produção concluído", "ok");
+          await ctx.sleep(500, g);
+          const erros = [["#8812 cupom 2x", "pedido #8812: cupom aplicado duas vezes"], ["#8813 cupom 2x", "pedido #8813: cupom aplicado duas vezes"], ["#8815 total < 0", "pedido #8815: total negativo"]];
+          for (const [curto, longo] of erros) {
+            await ctx.sleep(500, g);
+            prodRows.add(curto, "r-fail");
+            ctx.log("Produção: " + longo, "fail");
+          }
+          setNode(D, "fail");
+          ctx.verdict("Bug em produção", "Os clientes encontraram o erro antes de qualquer teste.", "fail");
+          if (opts.tour && !ctx.userTouched) {
+            await ctx.sleep(3200, g);
+            if (!ctx.userTouched) ctx.setMode("com");
+          }
+          return;
+        }
+
+        await hop(1);
+        const shown = await runTests(true);
+        setNode(T, "fail");
+        burst(svg, [T.cx, Y + H / 2], "fail");
+        ctx.log("Pipeline vermelho: build e deploy não rodam", "fail");
+        nodes[3].g.classList.add("dim"); D.g.classList.add("dim");
+        ctx.verdict("Bloqueado nos testes", "O bug ficou no CI. Produção não foi tocada.");
+        await ctx.sleep(1800, g);
+
+        // 2º push: correção
+        ctx.log("Dev corrige o bug e faz push do commit b72d0aa", "info");
+        commitTxt.textContent = "b72d0aa  corrige cupom";
+        shown.forEach((r, k) => { r.textContent = "· " + TESTS[k]; r.setAttribute("class", "t-mono row dim"); });
+        reset();
+        nodes[3].g.classList.remove("dim"); D.g.classList.remove("dim");
+        await stage(0, "ok", 400);
+        await hop(0);
+        await stage(1, "ok", 400);
+        await hop(1);
+        setNode(T, "active");
+        ctx.verdict("Etapa: Testes", "Rodando a suíte de novo");
+        for (let k = 0; k < TESTS.length; k++) {
+          await ctx.sleep(380, g);
+          shown[k].textContent = "✓ " + TESTS[k];
+          shown[k].setAttribute("class", "t-mono row r-ok");
+          ctx.log("passou  " + TESTS[k], "ok");
+        }
+        setNode(T, "ok");
+        await hop(2, "ok");
+        await stage(3, "ok", 500);
+        ctx.log("Build: imagem gerada a partir do commit b72d0aa", "ok");
+        await hop(3, "ok");
+        await stage(4, "ok", 600);
+        prodRows.add("versão b72d0aa no ar", "r-ok");
+        prodRows.add("0 erros de cupom", "r-ok");
+        ctx.log("Deploy em produção concluído, sem o bug", "ok");
+        ctx.verdict("0 bugs em produção", "O teste pegou o bug no CI; só a correção chegou aos clientes.", "ok");
+      }
+    });
+  }
+
+  const REGISTRY = { idempotencia, retry, circuit, ratelimit, outbox, pipeline };
 
   window.Demos = {
     mount(el, id, opts) {

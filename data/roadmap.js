@@ -14,7 +14,9 @@ window.ROADMAP = {
   fases: [
     { id: "fundamentos", nome: "Fundamentos de backend", texto: "APIs, banco relacional, containers e cache." },
     { id: "confiabilidade", nome: "Confiabilidade", texto: "Fazer o sistema sobreviver a falhas previsíveis." },
-    { id: "distribuidos", nome: "Sistemas distribuídos", texto: "Consistência entre serviços que não compartilham memória." }
+    { id: "distribuidos", nome: "Sistemas distribuídos", texto: "Consistência entre serviços que não compartilham memória." },
+    { id: "testes", nome: "Testes e qualidade", texto: "Provar que o código faz o que deve, antes e depois de cada mudança." },
+    { id: "devops", nome: "DevOps e CI/CD", texto: "Levar o código do commit à produção de forma automática, repetível e segura." }
   ],
 
   topicos: [
@@ -259,6 +261,256 @@ const linhas = await db.any(
       progresso: 0,
       demo: null,
       resumo: "Projetar telas e regras para dados que ainda não chegaram em todo lugar.",
+      anotacoes: [],
+      armadilhas: [],
+      codigo: null
+    },
+
+    /* ---------------------------------------------------- Testes e qualidade */
+    {
+      id: "piramide-testes",
+      fase: "testes",
+      nome: "Pirâmide de testes",
+      status: "estudando",
+      progresso: 60,
+      demo: null,
+      resumo: "Muitos testes rápidos na base, poucos testes lentos no topo.",
+      anotacoes: [
+        "Unitários: testam uma função ou regra isolada, rodam em milissegundos e formam a maior parte da suíte.",
+        "Integração: testam a conversa com o que é real (banco, fila, outra API). Menos numerosos, pegam erro de SQL, de migração e de configuração.",
+        "Ponta a ponta (E2E): sobem o sistema inteiro e simulam o usuário. Poucos, só para os fluxos que não podem quebrar (login, checkout).",
+        "Cada teste segue Arrange, Act, Assert: prepara os dados, executa uma ação e confere um resultado."
+      ],
+      armadilhas: [
+        "Pirâmide invertida (muitos E2E, poucos unitários): a suíte fica lenta, frágil e ninguém confia quando ela falha.",
+        "Testar a implementação em vez do comportamento: qualquer refatoração quebra o teste sem que nada tenha quebrado de verdade.",
+        "Cobertura alta não é qualidade: 100% de linhas executadas sem nenhum assert útil não prova nada."
+      ],
+      codigo: `// regra de negócio pura: fácil de testar
+function aplicarCupom(total, cupom, agora = new Date()) {
+  if (cupom.expiraEm < agora) throw new Error("cupom expirado");
+  return Math.max(0, total - cupom.valor);
+}
+
+test("aplica o desconto do cupom", () => {
+  const cupom = { valor: 20, expiraEm: new Date("2099-01-01") };   // Arrange
+  const total = aplicarCupom(100, cupom);                           // Act
+  expect(total).toBe(80);                                           // Assert
+});
+
+test("rejeita cupom expirado", () => {
+  const cupom = { valor: 20, expiraEm: new Date("2020-01-01") };
+  expect(() => aplicarCupom(100, cupom)).toThrow("cupom expirado");
+});`
+    },
+    {
+      id: "testes-integracao",
+      fase: "testes",
+      nome: "Testes de integração com banco",
+      status: "estudando",
+      progresso: 40,
+      demo: null,
+      resumo: "Testar a API contra um PostgreSQL de verdade, sem sujar os dados entre um teste e outro.",
+      anotacoes: [
+        "Banco real em container (Docker ou o service do GitHub Actions), com as mesmas migrações de produção.",
+        "Cada teste roda dentro de uma transação que é desfeita no final: o banco volta limpo e os testes não dependem da ordem.",
+        "Supertest chama as rotas da API sem subir servidor na rede e confere status, corpo e o que foi gravado.",
+        "Dados de teste criados por funções (fábricas) dentro do próprio teste, não por um dump compartilhado."
+      ],
+      armadilhas: [
+        "Mockar o banco num teste de integração: o teste passa e o SQL quebrado só aparece em produção.",
+        "Testes que dependem da ordem ou de dados deixados por outro teste: passam sozinhos e falham na suíte.",
+        "Usar SQLite no teste e PostgreSQL em produção: tipos, locks e funções se comportam diferente."
+      ],
+      codigo: `const request = require("supertest");
+const { app, pool } = require("../src/app");
+
+let client;
+beforeEach(async () => {
+  client = await pool.connect();
+  await client.query("BEGIN");          // tudo que o teste gravar...
+  app.locals.db = client;
+});
+afterEach(async () => {
+  await client.query("ROLLBACK");       // ...é desfeito aqui
+  client.release();
+});
+
+test("POST /pedidos grava o pedido e os itens", async () => {
+  const res = await request(app)
+    .post("/pedidos")
+    .send({ clienteId: 1, itens: [{ produtoId: 7, qtd: 2 }] });
+
+  expect(res.status).toBe(201);
+  const { rows } = await client.query("SELECT qtd FROM itens_pedido WHERE pedido_id = $1", [res.body.id]);
+  expect(rows).toEqual([{ qtd: 2 }]);
+});`
+    },
+    {
+      id: "fluxo-testes",
+      fase: "testes",
+      nome: "Fluxo de testes: do TDD ao merge",
+      status: "estudando",
+      progresso: 35,
+      demo: null,
+      resumo: "Em que momento cada teste roda, da máquina do dev até o deploy.",
+      anotacoes: [
+        "TDD em três passos: escreve um teste que falha (vermelho), faz o mínimo para passar (verde) e melhora o código com o teste protegendo (refatorar).",
+        "Na máquina: testes unitários em modo watch enquanto codifica; hook de pre-commit roda lint e os testes rápidos.",
+        "No pull request: o CI roda a suíte completa (unitários + integração). PR só pode ser mergeado com o pipeline verde.",
+        "Depois do merge: build, deploy em staging, testes E2E de fumaça e só então produção.",
+        "Bug encontrado vira primeiro um teste que reproduz o bug; a correção vem depois e o teste impede que ele volte."
+      ],
+      armadilhas: [
+        "Teste instável (flaky) ignorado com retry automático: o time aprende a não confiar no vermelho.",
+        "Suíte lenta demais para rodar antes do push: o dev pula e o CI vira o primeiro lugar onde o erro aparece.",
+        "Proteção de branch desligada: alguém mergeia com o pipeline vermelho \"só desta vez\"."
+      ],
+      codigo: `// 1. Vermelho: o teste descreve o bug do cupom aplicado duas vezes
+test("aplica o cupom uma vez só, mesmo se a requisição repetir", async () => {
+  const pedido = await criarPedido({ total: 100 });
+  await aplicarCupom(pedido.id, "DEZ");
+  await aplicarCupom(pedido.id, "DEZ");               // repetição
+  expect((await buscarPedido(pedido.id)).total).toBe(90);
+});
+
+// 2. Verde: a correção mínima
+async function aplicarCupom(pedidoId, codigo) {
+  const r = await db.query(
+    "UPDATE pedidos SET total = total - 10, cupom = $2 WHERE id = $1 AND cupom IS NULL",
+    [pedidoId, codigo]
+  );
+  return r.rowCount === 1;                             // false se já tinha cupom
+}
+
+// 3. Refatorar: com o teste verde, dá para mudar o código com segurança`
+    },
+    {
+      id: "mocks-dubles",
+      fase: "testes",
+      nome: "Mocks, stubs e dublês",
+      status: "proximo",
+      progresso: 0,
+      demo: null,
+      resumo: "Quando substituir uma dependência no teste, e quando isso esconde o problema.",
+      anotacoes: [],
+      armadilhas: [],
+      codigo: null
+    },
+
+    /* -------------------------------------------------------- DevOps e CI/CD */
+    {
+      id: "ci-pipeline",
+      fase: "devops",
+      nome: "Pipeline de CI/CD",
+      status: "estudando",
+      progresso: 50,
+      demo: "pipeline",
+      linguagem: "yaml",
+      resumo: "Cada push passa por lint, testes e build antes de chegar em produção.",
+      anotacoes: [
+        "CI (integração contínua): a cada push ou pull request o código é verificado automaticamente. O dev descobre o erro em minutos, não no deploy.",
+        "CD (entrega/implantação contínua): o que passou no CI vira um artefato que segue sozinho para staging e produção.",
+        "Falhar rápido: as etapas mais baratas vêm primeiro (lint, unitários); build e deploy só rodam se tudo antes passou.",
+        "O pipeline é código versionado junto com o projeto (.github/workflows), revisado em PR como qualquer outro arquivo.",
+        "Construir o artefato uma vez e promover a mesma imagem entre ambientes; não recompilar para produção."
+      ],
+      armadilhas: [
+        "Segredos impressos no log ou expostos para PRs de forks: use os secrets do repositório e nunca dê echo neles.",
+        "Versões diferentes entre a máquina e o CI (\"na minha máquina funciona\"): fixe a versão do Node e use npm ci com o lockfile.",
+        "Pipeline lento sem cache de dependências: o time passa a evitar o CI."
+      ],
+      codigo: `# .github/workflows/ci.yml
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    services:
+      postgres:                       # banco real para os testes de integração
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: teste
+        ports: ["5432:5432"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run lint             # falha rápido: o mais barato primeiro
+      - run: npm test
+        env:
+          DATABASE_URL: postgres://postgres:teste@localhost:5432/postgres
+
+  build:
+    needs: testes                     # só roda se os testes passarem
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t app:\${{ github.sha }} .`
+    },
+    {
+      id: "docker",
+      fase: "devops",
+      nome: "Containers com Docker",
+      status: "estudando",
+      progresso: 45,
+      demo: null,
+      linguagem: "dockerfile",
+      resumo: "Empacotar a aplicação com tudo o que ela precisa para rodar igual em qualquer lugar.",
+      anotacoes: [
+        "Imagem é a receita congelada (código + dependências + runtime); container é a imagem rodando.",
+        "Multi-stage build: uma etapa instala e compila, a imagem final leva só o necessário e fica bem menor.",
+        "A ordem das camadas importa: copiar package*.json e instalar antes de copiar o código aproveita o cache a cada build.",
+        "Docker Compose sobe a API, o PostgreSQL e o Redis juntos para desenvolver e testar localmente."
+      ],
+      armadilhas: [
+        "Usar a tag latest: o deploy de amanhã pode pegar outra imagem. Marque a imagem com o SHA do commit.",
+        "Rodar como root dentro do container e esquecer o .dockerignore (node_modules, .env e .git vão para a imagem).",
+        "Colocar segredos no Dockerfile ou na imagem: qualquer um que baixar a imagem consegue ler."
+      ],
+      codigo: `# etapa 1: instala dependências
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+# etapa 2: imagem final, só com o necessário
+FROM node:20-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=deps /app/node_modules ./node_modules
+COPY src ./src
+USER node
+EXPOSE 3000
+CMD ["node", "src/server.js"]`
+    },
+    {
+      id: "deploy-estrategias",
+      fase: "devops",
+      nome: "Estratégias de deploy e rollback",
+      status: "proximo",
+      progresso: 0,
+      demo: null,
+      resumo: "Blue-green, canary e como voltar atrás em segundos quando a versão nova falha.",
+      anotacoes: [],
+      armadilhas: [],
+      codigo: null
+    },
+    {
+      id: "observabilidade",
+      fase: "devops",
+      nome: "Observabilidade: logs, métricas e traces",
+      status: "proximo",
+      progresso: 0,
+      demo: null,
+      resumo: "Saber o que está acontecendo em produção sem precisar entrar no servidor.",
       anotacoes: [],
       armadilhas: [],
       codigo: null

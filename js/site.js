@@ -49,7 +49,8 @@
   function highlight(code) {
     const KW = /\b(const|let|var|async|await|function|return|if|else|for|try|catch|throw|new|class|this|of|in|true|false|null|SELECT|INSERT|INTO|VALUES|RETURNING|FROM|WHERE|ORDER|BY|LIMIT|FOR|UPDATE|SKIP|LOCKED|IS|NULL|AND)\b/g;
     const out = [];
-    const re = /(\/\/[^\n]*)|(`(?:\\.|[^`])*`|"(?:\\.|[^"\n])*"|'(?:\\.|[^'\n])*')/g;
+    // Comentários: // (JS) e # no início da linha ou após espaço (YAML, Dockerfile, shell).
+    const re = /(\/\/[^\n]*|(?:^|(?<=[ \t]))#[^\n]*)|(`(?:\\.|[^`])*`|"(?:\\.|[^"\n])*"|'(?:\\.|[^'\n])*')/gm;
     let last = 0, m;
     const plain = (t) => esc(t).replace(KW, '<span class="tok-k">$1</span>').replace(/\b(\d[\d_]*)\b/g, '<span class="tok-n">$1</span>');
     while ((m = re.exec(code))) {
