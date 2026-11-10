@@ -28,6 +28,14 @@ window.SITE_CONFIG = {
     commitsPorRepositorio: 8
   },
 
+  // Cada tópico do roadmap vira uma nota no repositório tech-notes, em
+  // <pasta>/<fase>/<id>.md. A sincronização roda pela GitHub Action do tech-notes.
+  techNotes: {
+    repositorio: "daviribrito/tech-notes",
+    branch: "main",
+    pasta: "roadmap"
+  },
+
   links: {
     github: "https://github.com/daviribrito",
     linkedin: "https://www.linkedin.com/in/daviribrito/",

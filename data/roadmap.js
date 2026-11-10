@@ -2,7 +2,13 @@
  * Roadmap de estudos.
  * status: "dominado" | "estudando" | "proximo"
  * demo: id do laboratório animado (ver js/demos.js) ou null
- * Progresso e anotações vieram da versão anterior; revise.
+ * linguagem (opcional): linguagem do campo codigo, para o tech-notes. Padrão: "js".
+ *
+ * Para criar uma matéria nova, adicione um objeto em `topicos` com um `id` único
+ * (ex.: "gestao-memoria-java"). Ela ganha automaticamente:
+ *   - uma página no portfólio: topico.html?id=gestao-memoria-java
+ *   - uma nota no tech-notes: roadmap/<fase>/gestao-memoria-java.md
+ * Para criar uma área nova, adicione um objeto em `fases`.
  */
 window.ROADMAP = {
   fases: [

@@ -14,7 +14,6 @@
       .filter((t) => t.status === "estudando")
       .sort((a, b) => (b.demo ? 1 : 0) - (a.demo ? 1 : 0) || b.progresso - a.progresso)[0];
   }
-  const hasSection = (t) => t.status !== "proximo" && (t.demo || t.anotacoes.length);
   const faseNome = (R, id) => (R.fases.find((f) => f.id === id) || {}).nome || "";
 
   /* ---------------------------------------------------------------- Início */
@@ -39,7 +38,7 @@
       frame(
         '<span class="eyebrow">Roadmap</span><h3>Um laboratório para cada conceito</h3>' +
         '<div class="topic-list">' +
-        labs.map((t) => '<a href="roadmap.html#' + esc(t.id) + '"><b>' + esc(t.nome) + "</b><small>" + t.progresso + "%</small>" + bar(t.progresso) + "</a>").join("") +
+        labs.map((t) => '<a href="' + topicUrl(t.id) + '"><b>' + esc(t.nome) + "</b><small>" + t.progresso + "%</small>" + bar(t.progresso) + "</a>").join("") +
         "</div>" +
         '<div class="foot">' + go("roadmap.html", "Ver o roadmap") + "</div>"
       ),
@@ -54,12 +53,12 @@
         '<svg viewBox="0 0 92 92" aria-hidden="true"><circle class="bg" cx="46" cy="46" r="42"/><circle class="fg" cx="46" cy="46" r="42" style="stroke-dashoffset:' + (264 - 264 * f.progresso / 100).toFixed(1) + '"/></svg>' +
         "<b>" + f.progresso + "%</b></div>" +
         "<div><h3>" + esc(f.nome) + "</h3><p>" + esc(f.resumo) + "</p></div></div>" +
-        '<div class="foot">' + go("roadmap.html#" + f.id, "Abrir tópico") + '<span class="eyebrow">' + esc(faseNome(R, f.fase)) + "</span></div>"
+        '<div class="foot">' + go(topicUrl(f.id), "Abrir tópico") + '<span class="eyebrow">' + esc(faseNome(R, f.fase)) + "</span></div>"
       ) : "",
       frame(
         '<span class="eyebrow">Aprendido recentemente</span>' +
         '<ol class="tl">' +
-        R.aprendidoRecentemente.map((r) => '<li><time datetime="' + esc(r.data) + '">' + esc(monthLabel(r.data)) + '</time><a href="roadmap.html#' + esc(r.topico) + '">' + esc(r.texto) + "</a></li>").join("") +
+        R.aprendidoRecentemente.map((r) => '<li><time datetime="' + esc(r.data) + '">' + esc(monthLabel(r.data)) + '</time><a href="' + topicUrl(r.topico) + '">' + esc(r.texto) + "</a></li>").join("") +
         "</ol>"
       ),
       frame(
@@ -114,6 +113,126 @@
     document.querySelectorAll("[data-cargo]").forEach((el) => (el.textContent = cfg.cargo));
   }
 
+  /* ------------------------------------------------------ Tópicos (matérias) */
+
+  // Cada matéria tem a sua página; no roadmap ela também abre em modal.
+  const topicUrl = (id) => "topico.html?id=" + encodeURIComponent(id);
+  const topicLink = (id, inner, cls) => '<a href="' + topicUrl(id) + '" data-topic="' + esc(id) + '"' + (cls ? ' class="' + cls + '"' : "") + ">" + inner + "</a>";
+
+  function noteUrl(t) {
+    const tn = window.SITE_CONFIG.techNotes;
+    if (!tn) return null;
+    return "https://github.com/" + tn.repositorio + "/blob/" + tn.branch + "/" + tn.pasta + "/" + t.fase + "/" + t.id + ".md";
+  }
+
+  // Ordem de leitura: pela fase, depois pela ordem em que o tópico aparece no arquivo.
+  function ordered(R) {
+    return R.fases.flatMap((f) => R.topicos.filter((t) => t.fase === f.id));
+  }
+
+  /* Conteúdo de uma matéria. mode: "page" (página própria) ou "modal". */
+  function topicBody(R, t, mode) {
+    const page = mode === "page";
+    const rv = page ? " rv" : "";
+    const hid = page ? "t-titulo" : "tmodal-titulo";
+    const hasNotes = t.anotacoes.length || t.armadilhas.length;
+    const note = noteUrl(t);
+
+    return (
+      '<div class="topic-head">' +
+      "<div>" +
+      '<span class="eyebrow' + rv + '">' + esc(faseNome(R, t.fase)) + "</span>" +
+      "<" + (page ? "h1" : "h2") + ' class="' + (page ? "h2" : "h3") + rv + '" id="' + hid + '" style="margin-top:10px">' + esc(t.nome) + "</" + (page ? "h1" : "h2") + ">" +
+      '<p class="lede' + rv + '">' + esc(t.resumo) + "</p></div>" +
+      '<div class="meter-row' + rv + '" role="img" aria-label="' + STATUS[t.status] + (t.status === "proximo" ? "" : ", " + t.progresso + "%") + '">' +
+      '<span class="st"><i class="pin" data-s="' + t.status + '"></i>' + STATUS[t.status] + "</span>" +
+      (t.status === "proximo" ? "" : bar(t.progresso) + t.progresso + "%") +
+      "</div></div>" +
+
+      (t.demo ? '<div class="' + rv.trim() + '" data-demo="' + esc(t.demo) + '"></div>' : "") +
+
+      (hasNotes
+        ? '<div class="grid-2 notes">' +
+          (t.anotacoes.length ? frame('<span class="eyebrow">Minhas anotações</span><ul class="bul">' + t.anotacoes.map((a) => "<li>" + esc(a) + "</li>").join("") + "</ul>") : "") +
+          (t.armadilhas.length ? frame('<span class="eyebrow">Armadilhas</span><ul class="bul trap">' + t.armadilhas.map((a) => "<li>" + esc(a) + "</li>").join("") + "</ul>") : "") +
+          "</div>"
+        : "") +
+
+      (t.codigo
+        ? '<div class="frame' + rv + '" style="margin-top:12px">' + window.Site.CORNERS +
+          '<details class="card code-card"' + (page ? "" : " open") + "><summary>Ver o código<span class=\"plus\" aria-hidden=\"true\">" + icon("plus") + "</span></summary><pre><code>" + highlight(t.codigo) + "</code></pre></details></div>"
+        : "") +
+
+      (!t.demo && !hasNotes && !t.codigo
+        ? frame(
+            '<span class="eyebrow">' + (t.status === "proximo" ? "Na fila" : "Em construção") + "</span>" +
+            "<p>" + (t.status === "proximo"
+              ? "Este tópico ainda vai começar. As anotações, as armadilhas e o laboratório entram aqui quando eu estudar."
+              : "As anotações deste tópico ainda estão sendo escritas.") + "</p>",
+            { cls: "upcoming" }
+          )
+        : "") +
+
+      '<div class="topic-links' + rv + '">' +
+      (note ? '<a class="go" href="' + esc(note) + '" target="_blank" rel="noopener">' + icon("book") + "Nota no tech-notes" + icon("ext") + "</a>" : "") +
+      (page ? '<a class="go" href="roadmap.html">Ver o roadmap' + icon("arrow") + "</a>" : "") +
+      "</div>"
+    );
+  }
+
+  function mountDemos(root) {
+    return [...root.querySelectorAll("[data-demo]")]
+      .map((el) => window.Demos.mount(el, el.dataset.demo, { tour: true }))
+      .filter(Boolean);
+  }
+
+  /* Modal de tópico (desktop e tablet). No celular o link abre a página. */
+  const modalMedia = window.matchMedia("(min-width: 768px)");
+
+  function topicModal(R) {
+    const dlg = document.createElement("dialog");
+    dlg.className = "tmodal";
+    dlg.setAttribute("aria-labelledby", "tmodal-titulo");
+    dlg.innerHTML =
+      '<div class="tmodal__bar">' +
+      '<span class="eyebrow">Roadmap</span>' +
+      '<div class="tmodal__actions">' +
+      '<a class="btn" data-tm-expand href="#">Expandir' + icon("expand") + "</a>" +
+      '<button type="button" class="icon-btn" data-tm-close aria-label="Fechar">' + icon("close") + "</button>" +
+      "</div></div>" +
+      '<div class="tmodal__body" data-tm-body></div>';
+    document.body.appendChild(dlg);
+
+    const body = dlg.querySelector("[data-tm-body]");
+    const expand = dlg.querySelector("[data-tm-expand]");
+    let labs = [];
+
+    dlg.querySelector("[data-tm-close]").addEventListener("click", () => dlg.close());
+    // Clique fora da caixa (no fundo escurecido) fecha.
+    dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener("close", () => {
+      labs.forEach((l) => l.destroy && l.destroy());
+      labs = [];
+      body.innerHTML = "";
+      if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+    });
+
+    return {
+      open(id) {
+        const t = R.topicos.find((x) => x.id === id);
+        if (!t) return false;
+        labs.forEach((l) => l.destroy && l.destroy());
+        body.innerHTML = topicBody(R, t, "modal");
+        body.scrollTop = 0;
+        expand.href = topicUrl(t.id);
+        if (!dlg.open) dlg.showModal();
+        labs = mountDemos(body);
+        history.replaceState(null, "", "#" + t.id);
+        return true;
+      }
+    };
+  }
+
   /* -------------------------------------------------------------- Roadmap */
   function roadmap() {
     const R = window.ROADMAP;
@@ -123,7 +242,7 @@
 
     $("[data-rm-top]").innerHTML =
       '<div class="rm-where"><span class="eyebrow">Onde estou</span>' +
-      (f ? "<span>" + esc(faseNome(R, f.fase)) + " › <b>" + esc(f.nome) + "</b> · " + f.progresso + "%</span>" + '<a class="btn" href="#' + esc(f.id) + '">Abrir' + icon("arrow") + "</a>" : "") +
+      (f ? "<span>" + esc(faseNome(R, f.fase)) + " › <b>" + esc(f.nome) + "</b> · " + f.progresso + "%</span>" + topicLink(f.id, "Abrir" + icon("arrow"), "btn") : "") +
       "</div>" +
       '<div class="rm-total">' + bar(Math.round((done / total) * 100)) + done + " de " + total + " tópicos dominados</div>";
 
@@ -131,15 +250,13 @@
       .map((s) => '<li><i class="pin" data-s="' + s + '"></i>' + STATUS[s] + "</li>").join("");
 
     const leaf = (t) => {
-      // Tópicos com seção abrem a seção; os próximos levam ao card em "Próximos passos".
-      const link = hasSection(t) || t.status === "proximo";
       const here = f && t.id === f.id;
       const meta = t.status === "proximo" ? "próximo" : t.progresso + "%" + (t.demo ? " · laboratório" : "");
-      return "<" + (link ? 'a href="#' + esc(t.id) + '"' : "div") + ' class="leaf rv' + (here ? " here" : "") + '" data-s="' + t.status + '">' +
+      return '<a href="' + topicUrl(t.id) + '" data-topic="' + esc(t.id) + '" class="leaf rv' + (here ? " here" : "") + '" data-s="' + t.status + '">' +
         (here ? '<span class="here-tag">Você está aqui</span>' : "") +
         '<i class="pin" data-s="' + t.status + '"></i>' +
         '<span class="leaf-tx"><b>' + esc(t.nome) + '</b><span class="leaf-meta">' + (t.status === "proximo" ? "" : bar(t.progresso)) + esc(meta) + "</span></span>" +
-        "</" + (link ? "a" : "div") + ">";
+        "</a>";
     };
 
     $("[data-rmap]").innerHTML =
@@ -153,37 +270,66 @@
           '<div class="rm-leaves">' + tops.map(leaf).join("") + "</div></div>";
       }).join("");
 
-    $("[data-topics]").innerHTML = R.topicos
-      .filter(hasSection)
-      .sort((a, b) => (a.demo ? 0 : 1) - (b.demo ? 0 : 1))
-      .map((t) =>
-        '<section class="sec topic" id="' + esc(t.id) + '" aria-labelledby="t-' + esc(t.id) + '">' +
-        '<div class="topic-head"><div>' +
-        '<span class="eyebrow">' + esc(faseNome(R, t.fase)) + "</span>" +
-        '<h2 class="h3" id="t-' + esc(t.id) + '" style="margin-top:10px">' + esc(t.nome) + "</h2>" +
-        '<p class="lede">' + esc(t.resumo) + "</p></div>" +
-        '<div class="meter-row" role="img" aria-label="' + STATUS[t.status] + ", " + t.progresso + '%"><span class="st"><i class="pin" data-s="' + t.status + '"></i>' + STATUS[t.status] + "</span>" + bar(t.progresso) + t.progresso + "%</div>" +
-        "</div>" +
-        (t.demo ? '<div class="rv" data-demo="' + esc(t.demo) + '"></div>' : "") +
-        ((t.anotacoes.length || t.armadilhas.length) ? '<div class="grid-2 notes">' +
-          (t.anotacoes.length ? frame('<span class="eyebrow">Minhas anotações</span><ul class="bul">' + t.anotacoes.map((a) => "<li>" + esc(a) + "</li>").join("") + "</ul>") : "") +
-          (t.armadilhas.length ? frame('<span class="eyebrow">Armadilhas</span><ul class="bul trap">' + t.armadilhas.map((a) => "<li>" + esc(a) + "</li>").join("") + "</ul>") : "") +
-          "</div>" : "") +
-        (t.codigo ? '<div class="frame rv" style="margin-top:30px">' + window.Site.CORNERS +
-          '<details class="card code-card"><summary>Ver o código<span class="plus" aria-hidden="true">' + icon("plus") + "</span></summary><pre><code>" + highlight(t.codigo) + "</code></pre></details></div>" : "") +
-        "</section>")
-      .join("");
-
-    document.querySelectorAll("[data-demo]").forEach((el) => window.Demos.mount(el, el.dataset.demo, { tour: true }));
-
     $("[data-upcoming]").innerHTML = R.topicos
       .filter((t) => t.status === "proximo")
-      .map((t) => frame('<span class="eyebrow">' + esc(faseNome(R, t.fase)) + "</span><h3>" + esc(t.nome) + "</h3><p>" + esc(t.resumo) + "</p>", { id: t.id }))
+      .map((t) => frame(
+        '<span class="eyebrow">' + esc(faseNome(R, t.fase)) + "</span><h3>" + esc(t.nome) + "</h3><p>" + esc(t.resumo) + "</p>",
+        { href: topicUrl(t.id), attrs: ' data-topic="' + esc(t.id) + '"' }
+      ))
       .join("");
 
     $("[data-recent]").innerHTML = R.aprendidoRecentemente
-      .map((r) => '<li><time datetime="' + esc(r.data) + '">' + esc(monthLabel(r.data)) + '</time><a href="#' + esc(r.topico) + '">' + esc(r.texto) + "</a></li>")
+      .map((r) => '<li><time datetime="' + esc(r.data) + '">' + esc(monthLabel(r.data)) + "</time>" + topicLink(r.topico, esc(r.texto)) + "</li>")
       .join("");
+
+    // Desktop e tablet: abre em modal. Celular, ou Ctrl/Cmd/clique do meio: segue o link.
+    const modal = topicModal(R);
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("a[data-topic]");
+      if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || !modalMedia.matches) return;
+      if (modal.open(a.dataset.topic)) e.preventDefault();
+    });
+
+    // Links antigos (roadmap.html#retry) continuam funcionando.
+    const hashId = decodeURIComponent(location.hash.slice(1));
+    if (hashId && R.topicos.some((t) => t.id === hashId)) {
+      if (modalMedia.matches) modal.open(hashId);
+      else location.replace(topicUrl(hashId));
+    }
+  }
+
+  /* --------------------------------------------------- Página de uma matéria */
+  function topico() {
+    const R = window.ROADMAP;
+    const root = $("[data-topic-page]");
+    const id = new URLSearchParams(location.search).get("id");
+    const list = ordered(R);
+    const i = list.findIndex((t) => t.id === id);
+    const t = list[i];
+
+    if (!t) {
+      root.innerHTML =
+        '<div class="head"><span class="tag">Roadmap</span><h1 class="h2">Tópico não encontrado <span>talvez o endereço tenha mudado</span></h1>' +
+        '<div class="actions"><a class="btn primary" href="roadmap.html">Ver o roadmap' + icon("arrow") + "</a></div></div>";
+      document.title = "Tópico não encontrado, Davi Brito";
+      return;
+    }
+
+    document.title = t.nome + ", Davi Brito";
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc) desc.content = t.resumo;
+
+    const prev = list[i - 1], next = list[i + 1];
+    const navCard = (x, label, cls) => x
+      ? '<a class="tnav__link ' + cls + '" href="' + topicUrl(x.id) + '"><span class="eyebrow">' + label + "</span><b>" + esc(x.nome) + "</b></a>"
+      : "<span></span>";
+
+    root.innerHTML =
+      '<nav class="crumbs rv" aria-label="Caminho"><a href="roadmap.html">' + icon("back") + "Roadmap</a><span>/</span><span>" + esc(faseNome(R, t.fase)) + "</span></nav>" +
+      topicBody(R, t, "page") +
+      '<nav class="tnav rv" aria-label="Outros tópicos">' + navCard(prev, "Anterior", "prev") + navCard(next, "Próximo", "next") + "</nav>";
+
+    mountDemos(root);
   }
 
   function commits() {
@@ -191,7 +337,7 @@
     if (root) window.Commits.renderPage(root);
   }
 
-  const PAGES = { home, sobre, roadmap, commits };
+  const PAGES = { home, sobre, roadmap, topico, commits };
   document.addEventListener("DOMContentLoaded", () => {
     const fn = PAGES[document.body.dataset.page];
     if (fn) fn();

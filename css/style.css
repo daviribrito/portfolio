@@ -641,7 +641,61 @@ a.leaf:hover { background: var(--raise); box-shadow: var(--shadow), 0 0 0 1px va
 .tok-c { color: #7b8190; font-style: italic; }
 .tok-n { color: #ffc27a; }
 
-.upcoming .card { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line); }
+.upcoming .card, .card.upcoming, .upcoming > .card { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line); }
+a.frame > .card { transition: background-color 0.25s, box-shadow 0.3s, transform 0.35s var(--ease); }
+a.frame:hover > .card { box-shadow: inset 0 0 0 1.5px var(--line-strong), var(--shadow); transform: translateY(-2px); }
+
+/* Links do tópico: nota no tech-notes e volta ao roadmap */
+.topic-links { display: flex; flex-wrap: wrap; gap: 10px 26px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
+.topic-links .go svg:first-child { width: 16px; height: 16px; margin-right: 3px; }
+
+/* Página de uma matéria */
+.topic-page .topic-head { margin-bottom: 24px; }
+.crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 26px; font-size: 14px; color: var(--faint); }
+.crumbs a { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 500; }
+.crumbs a:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+.crumbs svg { width: 15px; height: 15px; }
+
+.tnav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 28px; }
+.tnav__link { display: flex; flex-direction: column; gap: 6px; padding: 18px 22px; border-radius: var(--r-panel); background: var(--card); transition: background-color 0.25s, transform 0.35s var(--ease); min-width: 0; }
+.tnav__link:hover { background: var(--hover); transform: translateY(-2px); }
+.tnav__link b { font-size: 16px; font-weight: 700; letter-spacing: -0.015em; }
+.tnav__link.next { text-align: right; grid-column: 2; }
+@media (max-width: 560px) {
+  .tnav { grid-template-columns: minmax(0, 1fr); }
+  .tnav__link.next { grid-column: 1; }
+}
+
+/* Modal de tópico (desktop e tablet) */
+html:has(.tmodal[open]) { overflow: hidden; }
+.tmodal {
+  width: min(960px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-tile);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--line), 0 40px 100px -30px rgb(0 0 0 / 0.45);
+  overflow: hidden;
+  flex-direction: column;
+}
+.tmodal[open] { display: flex; animation: tmIn 0.45s var(--ease); }
+.tmodal::backdrop { background: rgb(10 12 16 / 0.42); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: tmFade 0.3s ease; }
+@keyframes tmIn { from { opacity: 0; transform: translateY(18px) scale(0.98); } }
+@keyframes tmFade { from { opacity: 0; } }
+.tmodal__bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 16px 14px 28px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.tmodal__actions { display: flex; align-items: center; gap: 8px; }
+.tmodal__actions .btn { min-height: 38px; padding: 6px 16px; font-size: 14px; }
+.tmodal__actions .btn:hover svg { transform: none; }
+.tmodal__body { overflow-y: auto; overscroll-behavior: contain; padding: clamp(24px, 3.4vw, 40px); }
+.tmodal__body .topic-head { margin-bottom: 22px; }
 
 /* --------------------------------------------------------------------------
    Sobre

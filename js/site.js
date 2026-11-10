@@ -9,6 +9,10 @@
     ext: '<path d="M8 16L16 8M9.5 8H16v6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
     arrow: '<path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
     plus: '<path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    close: '<path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    expand: '<path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    back: '<path d="M19 12H6M11 6.5L5.5 12l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    book: '<path d="M5 4.5A1.5 1.5 0 016.5 3H19v15H6.5A1.5 1.5 0 005 19.5v-15zM5 19.5A1.5 1.5 0 006.5 21H19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
     chevron: '<path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
     down: '<path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
     replay: '<path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>',
@@ -29,7 +33,7 @@
   function frame(inner, opts) {
     const o = opts || {};
     const tag = o.href ? "a" : "div";
-    return "<" + tag + ' class="frame rv ' + (o.cls || "") + '"' + (o.href ? ' href="' + o.href + '"' : "") + (o.id ? ' id="' + o.id + '"' : "") + ">" +
+    return "<" + tag + ' class="frame rv ' + (o.cls || "") + '"' + (o.href ? ' href="' + o.href + '"' : "") + (o.id ? ' id="' + o.id + '"' : "") + (o.attrs || "") + ">" +
       CORNERS + '<div class="card ' + (o.cardCls || "") + '">' + inner + "</div></" + tag + ">";
   }
 
@@ -246,6 +250,9 @@
       });
     }, { threshold: 0.25 });
     io.observe(root);
+
+    // Para a simulação e solta o observador (usado ao fechar o modal do roadmap).
+    ctx.destroy = () => { gen += 1; io.disconnect(); };
 
     return ctx;
   }

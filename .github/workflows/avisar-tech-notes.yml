@@ -1,0 +1,31 @@
+# Quando o roadmap muda, avisa o tech-notes para gerar as notas na hora.
+# Sem o segredo TECH_NOTES_TOKEN este passo é pulado e o tech-notes
+# sincroniza sozinho a cada hora. Como criar o segredo: ver README.
+name: Avisar o tech-notes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/roadmap.js"
+      - "data/config.js"
+  workflow_dispatch:
+
+jobs:
+  avisar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disparar a sincronização no tech-notes
+        env:
+          TOKEN: ${{ secrets.TECH_NOTES_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "Segredo TECH_NOTES_TOKEN não configurado: o tech-notes sincroniza na próxima hora."
+            exit 0
+          fi
+          curl -fsS -X POST \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/daviribrito/tech-notes/dispatches \
+            -d '{"event_type":"portfolio-atualizado"}'
+          echo "tech-notes avisado."
