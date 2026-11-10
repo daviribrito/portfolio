@@ -149,14 +149,14 @@
       (t.status === "proximo" ? "" : bar(t.progresso) + t.progresso + "%") +
       "</div></div>" +
 
-      (t.demo ? '<div class="' + rv.trim() + '" data-demo="' + esc(t.demo) + '"></div>' : "") +
-
       (hasNotes
         ? '<div class="grid-2 notes">' +
           (t.anotacoes.length ? frame('<span class="eyebrow">Minhas anotações</span><ul class="bul">' + t.anotacoes.map((a) => "<li>" + esc(a) + "</li>").join("") + "</ul>") : "") +
           (t.armadilhas.length ? frame('<span class="eyebrow">Armadilhas</span><ul class="bul trap">' + t.armadilhas.map((a) => "<li>" + esc(a) + "</li>").join("") + "</ul>") : "") +
           "</div>"
         : "") +
+
+      (t.demo ? '<div class="topic-lab' + rv + '" data-demo="' + esc(t.demo) + '"></div>' : "") +
 
       (t.codigo
         ? '<div class="frame' + rv + '" style="margin-top:12px">' + window.Site.CORNERS +
@@ -223,6 +223,8 @@
         if (!t) return false;
         labs.forEach((l) => l.destroy && l.destroy());
         body.innerHTML = topicBody(R, t, "modal");
+        // No modal nada fica escondido esperando rolagem: tudo aparece de cara.
+        body.querySelectorAll(".rv").forEach((el) => el.classList.remove("rv"));
         body.scrollTop = 0;
         expand.href = topicUrl(t.id);
         if (!dlg.open) dlg.showModal();
