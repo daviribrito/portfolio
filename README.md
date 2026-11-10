@@ -16,7 +16,7 @@ Site estático (HTML, CSS e JS puros, sem build) com quatro páginas:
 - **Quais projetos aparecem em Commits:** edite `github.repositorios` em `data/config.js`. Só os repositórios dessa lista aparecem, na ordem da lista.
 - **Sobre, trajetória e feitos:** `data/sobre.js`. Os feitos marcados com `exemplo: true` aparecem com a etiqueta "Exemplo" no site. Troque pelo texto real e apague o `exemplo: true`.
 - **Roadmap:** `data/roadmap.js`. Cada tópico tem `status` (`dominado`, `estudando`, `proximo`), `progresso` (0–100), anotações, armadilhas e código. O campo `demo` liga o tópico a um laboratório animado: `retry`, `idempotencia`, `circuit`, `ratelimit` ou `outbox`.
-- **Links de contato:** `links` em `data/config.js`. Falta completar a URL do LinkedIn.
+- **Links de contato:** `links` em `data/config.js` (GitHub, LinkedIn e e-mail).
 
 ## Rodar localmente
 
