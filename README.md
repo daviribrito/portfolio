@@ -1,5 +1,7 @@
 # Portfólio, Davi Brito
 
+No ar em **https://daviribrito.github.io/portfolio/**
+
 Site estático (HTML, CSS e JS puros, sem build) com quatro páginas:
 
 | Página | Arquivo | Conteúdo vem de |
@@ -26,10 +28,18 @@ pwsh -File tools/serve.ps1
 
 Depois abra http://localhost:3200.
 
-## Publicar no GitHub Pages
+## Publicar
 
-1. Crie um repositório (ou use o `portfolio`) e envie todos os arquivos.
-2. Em Settings → Pages, escolha a branch `main` e a pasta `/ (root)`.
+O GitHub Pages publica a branch `main` (pasta raiz). Cada push em `main` atualiza o site em um ou dois minutos.
+
+## Visual
+
+As regras de design (cores, tipografia, componentes, temas claro e escuro) estão em [`DESIGN.md`](DESIGN.md). O contexto do produto está em [`PRODUCT.md`](PRODUCT.md).
+
+## Arquivos de apoio
+
+- `tools/serve.ps1`: servidor local em PowerShell, sem dependências.
+- `tools/capa-portfolio.html`: página usada para gerar a imagem de capa (`assets/projetos/portfolio-capa.png`) que aparece ao compartilhar o link.
 
 ## Sobre a aba Commits
 

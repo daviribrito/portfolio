@@ -305,7 +305,7 @@
       b.innerHTML = icon(dark ? "sun" : "moon");
       b.setAttribute("aria-label", dark ? "Usar tema claro" : "Usar tema escuro");
       const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.content = dark ? "#0b0b0b" : "#efefef";
+      if (meta) meta.content = dark ? "#000000" : "#f4f5f7";
     };
     b.addEventListener("click", () => {
       const next = currentTheme() === "dark" ? "light" : "dark";
