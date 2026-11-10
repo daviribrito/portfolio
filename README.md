@@ -1,6 +1,13 @@
 # Portfólio, Davi Brito
 
-No ar em **https://daviribrito.github.io/portfolio/**
+🔗 **Site no ar:** [daviribrito.github.io/portfolio](https://daviribrito.github.io/portfolio/)
+
+| Página | Link |
+|---|---|
+| Início | [daviribrito.github.io/portfolio](https://daviribrito.github.io/portfolio/) |
+| Roadmap | [daviribrito.github.io/portfolio/roadmap.html](https://daviribrito.github.io/portfolio/roadmap.html) |
+| Sobre mim | [daviribrito.github.io/portfolio/sobre.html](https://daviribrito.github.io/portfolio/sobre.html) |
+| Commits | [daviribrito.github.io/portfolio/commits.html](https://daviribrito.github.io/portfolio/commits.html) |
 
 Site estático (HTML, CSS e JS puros, sem build) com quatro páginas:
 
