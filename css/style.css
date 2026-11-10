@@ -607,7 +607,8 @@ a.leaf:hover { background: var(--raise); box-shadow: var(--shadow), 0 0 0 1px va
 .topic-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; margin-bottom: 28px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
 .topic-head .lede { margin-top: 12px; }
 .meter-row { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.meter-row .bar { width: 140px; }
+.meter-row { flex-wrap: wrap; }
+.meter-row .bar { width: min(140px, 36vw); }
 .meter-row .st { display: inline-flex; align-items: center; gap: 8px; }
 
 .notes { margin-top: 12px; }

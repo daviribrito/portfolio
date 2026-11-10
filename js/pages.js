@@ -131,7 +131,8 @@
       .map((s) => '<li><i class="pin" data-s="' + s + '"></i>' + STATUS[s] + "</li>").join("");
 
     const leaf = (t) => {
-      const link = hasSection(t);
+      // Tópicos com seção abrem a seção; os próximos levam ao card em "Próximos passos".
+      const link = hasSection(t) || t.status === "proximo";
       const here = f && t.id === f.id;
       const meta = t.status === "proximo" ? "próximo" : t.progresso + "%" + (t.demo ? " · laboratório" : "");
       return "<" + (link ? 'a href="#' + esc(t.id) + '"' : "div") + ' class="leaf rv' + (here ? " here" : "") + '" data-s="' + t.status + '">' +
