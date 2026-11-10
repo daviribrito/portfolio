@@ -211,6 +211,8 @@
     // Clique fora da caixa (no fundo escurecido) fecha.
     dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
     dlg.addEventListener("close", () => {
+      // O evento chega um instante depois; se outro tópico já foi aberto, não apaga.
+      if (dlg.open) return;
       labs.forEach((l) => l.destroy && l.destroy());
       labs = [];
       body.innerHTML = "";
