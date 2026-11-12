@@ -526,10 +526,70 @@ main { max-width: var(--wrap); margin: 0 auto; padding: 18px clamp(10px, 2.4vw, 
 .legend li { display: inline-flex; align-items: center; gap: 8px; }
 
 /* Ponto de status: verde dominado, âmbar estudando, contorno próximo */
-.pin { flex: none; width: 11px; height: 11px; border-radius: 50%; background: var(--faint); position: relative; }
-.pin[data-s="dominado"] { background: var(--live); }
-.pin[data-s="estudando"] { background: #f5b13d; }
-.pin[data-s="proximo"] { background: transparent; box-shadow: inset 0 0 0 2px var(--faint); }
+/* Estados de um tópico: não iniciado (contorno), em estudo (âmbar), em prática (azul),
+   dominado (verde), revisar (verde com anel âmbar) */
+.pin { flex: none; display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 2px var(--faint); position: relative; }
+.pin[data-s="estudo"] { background: #f5b13d; box-shadow: none; }
+.pin[data-s="pratica"] { background: var(--accent); box-shadow: none; }
+.pin[data-s="dominado"] { background: var(--live); box-shadow: none; }
+.pin[data-s="revisar"] { background: var(--live); box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px #f5b13d; }
+
+/* Chips de metadados: estado, nível e importância */
+.mchip { display: inline-flex; align-items: center; gap: 7px; min-height: 28px; padding: 3px 11px; border-radius: 999px; background: var(--card); font-size: 13px; font-weight: 600; color: var(--soft); white-space: nowrap; }
+.mchip.imp-essencial { background: color-mix(in srgb, var(--fail) 10%, var(--card)); color: var(--fail); }
+.mchip.imp-importante { background: color-mix(in srgb, var(--accent) 10%, var(--card)); color: var(--accent); }
+.mchip.imp-complementar { color: var(--muted); }
+.topic-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.topic-head .eyebrow a { color: var(--accent); }
+
+/* Contagem por estado */
+.rm-counts { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px; color: var(--muted); }
+.sc { display: inline-flex; align-items: center; gap: 7px; font-variant-numeric: tabular-nums; }
+.rm-where > b { font-size: 28px; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.rm-top .rm-total, .area-progress .rm-total { flex: 1; min-width: 160px; }
+.rm-top .rm-total .bar, .area-progress .rm-total .bar { width: 100%; }
+
+/* Listas de tópicos relacionados e de planejamento */
+.rel, .plan-list { display: grid; gap: 8px; }
+.rel li, .plan-list li { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 10px; font-size: 15px; }
+.rel li a, .plan-list li a { font-weight: 600; }
+.rel li a:hover, .plan-list li a:hover { color: var(--accent); }
+.rel li small, .plan-list li small { grid-column: 2; font-size: 12.5px; color: var(--faint); }
+.area-rel li { grid-template-columns: minmax(0, 1fr) auto; }
+.area-rel li small { grid-column: auto; }
+.plan .card > p:first-of-type { font-size: 13.5px; }
+
+/* Área na trilha do roadmap */
+.leaf.area-leaf { width: min(100%, 390px); align-items: flex-start; }
+.area-leaf .leaf-tx { gap: 8px; }
+.area-leaf b { font-size: 16.5px; font-weight: 700; letter-spacing: -0.02em; }
+.area-leaf .leaf-meta .bar { width: 72px; }
+.leaf-counts { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12.5px; color: var(--muted); }
+.rm-row.l .area-leaf { text-align: right; }
+.rm-row.l .area-leaf .leaf-tx { align-items: flex-end; }
+.rm-hub .rm-label b { font-size: 15px; font-variant-numeric: tabular-nums; }
+
+/* Página da área */
+.area-progress { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; padding: 16px 22px; margin-bottom: 12px; border-radius: var(--r-panel); background: var(--card); }
+.area-info { margin-bottom: 8px; }
+.level-block { margin-top: clamp(36px, 5vw, 56px); }
+.level-block .sub-head { margin-bottom: 16px; }
+.trows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.trow { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 13px 16px; border-radius: var(--r-small); background: var(--card); transition: background-color 0.2s, transform 0.3s var(--ease); }
+.trow:hover { background: var(--hover); transform: translateY(-1px); }
+.trow-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.trow-tx b { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; }
+.trow-tx small { font-size: 12.5px; color: var(--faint); }
+.trow .mchip { min-height: 24px; padding: 2px 9px; font-size: 12px; }
+@media (max-width: 760px) {
+  .trows { grid-template-columns: minmax(0, 1fr); }
+  .rm-row.l .area-leaf { text-align: left; }
+  .rm-row.l .area-leaf .leaf-tx { align-items: flex-start; }
+}
+
+/* Referências do tópico */
+.topic-refs { margin-top: 18px; display: grid; gap: 8px; }
+.topic-refs ul { display: grid; gap: 6px; }
 
 .rmap { position: relative; display: flex; flex-direction: column; gap: 52px; padding: 4px 0 12px; }
 .rmap::before { content: ""; position: absolute; left: 50%; top: 28px; bottom: 20px; width: 2px; margin-left: -1px; border-radius: 1px; background: var(--line); }

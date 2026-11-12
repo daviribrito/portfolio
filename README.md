@@ -13,46 +13,62 @@ Site estático (HTML, CSS e JS puros, sem build) com estas páginas:
 
 | Página | Arquivo | Conteúdo vem de |
 |---|---|---|
-| Início | `index.html` | simulação de idempotência + atalhos |
+| Início | `index.html` | simulação de idempotência + resumo do roadmap |
 | Sobre | `sobre.html` | `data/sobre.js` |
-| Roadmap | `roadmap.html` | `data/roadmap.js`: a árvore; cada matéria abre em modal (desktop e tablet) ou direto na página (celular) |
-| Matéria | `topico.html?id=<id>` | `data/roadmap.js` + `js/demos.js`: uma página por tópico |
+| Roadmap | `roadmap.html` | visão geral: progresso, o que estudar agora e as 11 áreas |
+| Área | `area.html?id=<area>` | objetivo, pré-requisitos, critérios e tópicos por nível (N1 a N4) |
+| Tópico | `topico.html?id=<id>` | o que aprender, como aplicar, pré-requisitos e as suas anotações; abre em modal no desktop e tablet |
 | Commits | `commits.html` | API pública do GitHub + `data/config.js` |
 
 ## Editar o conteúdo
 
 - **Quais projetos aparecem em Commits:** edite `github.repositorios` em `data/config.js`. Só os repositórios dessa lista aparecem, na ordem da lista.
-- **Sobre, trajetória e feitos:** `data/sobre.js`. Os feitos marcados com `exemplo: true` aparecem com a etiqueta "Exemplo" no site. Troque pelo texto real e apague o `exemplo: true`.
-- **Roadmap:** `data/roadmap.js`. Cada tópico tem `status` (`dominado`, `estudando`, `proximo`), `progresso` (0–100), anotações, armadilhas e código. O campo `demo` liga o tópico a um laboratório animado: `retry`, `idempotencia`, `circuit`, `ratelimit` ou `outbox`.
+- **Sobre, trajetória e feitos:** `data/sobre.js`.
 - **Links de contato:** `links` em `data/config.js` (GitHub, LinkedIn e e-mail).
 
-## Criar uma matéria nova (e a nota no tech-notes)
+## Roadmap de Backend Engineering
 
-Adicione um objeto em `topicos` no `data/roadmap.js`, por exemplo:
+O roadmap fica em dois arquivos:
+
+| Arquivo | O que guarda |
+|---|---|
+| `data/roadmap.js` | A **estrutura**: 11 áreas e os tópicos de cada uma, com nível (N1 a N4), importância (essencial, importante, complementar), pré-requisitos, o que aprender e como aplicar. |
+| `data/estudos.js` | O **seu progresso**: o status de cada tópico, as anotações e o "aprendido recentemente". Começa vazio. |
+
+### Registrar um estudo
+
+Em `data/estudos.js`:
 
 ```js
-{
-  id: "gestao-memoria-java",        // único: minúsculas, números e hífen
-  fase: "fundamentos",              // id de uma das fases
-  nome: "Gestão de memória em Java",
-  status: "estudando",              // dominado | estudando | proximo
-  progresso: 30,
-  demo: null,
-  linguagem: "java",                // linguagem do campo codigo (padrão: js)
-  resumo: "Heap, stack, GC e vazamentos.",
-  anotacoes: ["..."],
-  armadilhas: ["..."],
-  codigo: `...`
-}
+status: {
+  "be-idempotencia": "pratica"      // nao-iniciado | estudo | pratica | dominado | revisar
+},
+conteudo: {
+  "be-idempotencia": {
+    anotacoes: ["..."],
+    armadilhas: ["..."],
+    codigo: `...`,
+    linguagem: "java",
+    demo: "idempotencia",           // laboratório opcional
+    links: [{ titulo: "Artigo", url: "https://..." }]
+  }
+},
+aprendidoRecentemente: [
+  { data: "2026-11", texto: "Chaves de idempotência com SET NX", topico: "be-idempotencia" }
+]
 ```
 
-Ao enviar para a `main`:
+O progresso de cada área é a fração de tópicos dominados (ou marcados para revisar). Um tópico só deve virar `dominado` quando foi entendido **e** aplicado na prática.
 
-1. A página nasce sozinha em `topico.html?id=gestao-memoria-java` e aparece na árvore do roadmap.
-2. O repositório [tech-notes](https://github.com/daviribrito/tech-notes) gera a nota `roadmap/<fase>/gestao-memoria-java.md`, com link para a página. A página do portfólio também aponta para a nota (botão "Nota no tech-notes").
+### Criar um tópico novo
+
+Adicione um objeto em `topicos` no `data/roadmap.js` com `id` único (minúsculas, números e hífen), `area`, `grupo`, `nome`, `nivel`, `importancia`, `pre`, `descricao`, `aprender` e `aplicar`. O cabeçalho do arquivo tem o modelo.
+
+### Ligação com o tech-notes
+
+Cada tópico vira uma nota no repositório [tech-notes](https://github.com/daviribrito/tech-notes) em `roadmap/<area>/<id>.md`, cada área ganha um `README.md` com os tópicos por nível, e `roadmap/README.md` mostra o progresso geral. A página do tópico aponta para a nota (botão "Nota no tech-notes") e a nota aponta para a página.
 
 A sincronização é feita pela Action **Sincronizar com o portfólio** do tech-notes. Ela roda a cada hora e também pode ser disparada à mão em Actions → Run workflow. Se você remover um tópico, a nota gerada dele também é removida. Notas escritas à mão no tech-notes nunca são tocadas.
-
 ### Sincronizar na hora (opcional)
 
 Por padrão a nota aparece em até 1 hora. Para gerar no mesmo minuto do push:
@@ -60,7 +76,8 @@ Por padrão a nota aparece em até 1 hora. Para gerar no mesmo minuto do push:
 1. Crie um token *fine-grained* em GitHub → Settings → Developer settings → Personal access tokens, só com o repositório `tech-notes` e a permissão **Contents: Read and write**.
 2. No repositório `portfolio`, vá em Settings → Secrets and variables → Actions → New repository secret, com o nome `TECH_NOTES_TOKEN` e o token como valor.
 
-A Action **Avisar o tech-notes** (`.github/workflows/avisar-tech-notes.yml`) passa a disparar a sincronização sempre que `data/roadmap.js` mudar.
+A Action **Avisar o tech-notes** (`.github/workflows/avisar-tech-notes.yml`) passa a disparar a sincronização sempre que `data/roadmap.js` ou `data/estudos.js` mudarem.
+
 ## Rodar localmente
 
 Sem Node nem Python, usando o PowerShell:

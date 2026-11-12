@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - "data/roadmap.js"
+      - "data/estudos.js"
       - "data/config.js"
   workflow_dispatch:
 
