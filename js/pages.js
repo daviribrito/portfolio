@@ -39,6 +39,7 @@
         '<span class="eyebrow">Roadmap</span><h3>Um laboratório para cada conceito</h3>' +
         '<div class="topic-list">' +
         labs.map((t) => '<a href="' + topicUrl(t.id) + '"><b>' + esc(t.nome) + "</b><small>" + t.progresso + "%</small>" + bar(t.progresso) + "</a>").join("") +
+        (labs.length ? "" : "<p>Os laboratórios aparecem aqui conforme os tópicos forem adicionados ao roadmap.</p>") +
         "</div>" +
         '<div class="foot">' + go("roadmap.html", "Ver o roadmap") + "</div>"
       ),
@@ -58,7 +59,7 @@
       frame(
         '<span class="eyebrow">Aprendido recentemente</span>' +
         '<ol class="tl">' +
-        R.aprendidoRecentemente.map((r) => '<li><time datetime="' + esc(r.data) + '">' + esc(monthLabel(r.data)) + '</time><a href="' + topicUrl(r.topico) + '">' + esc(r.texto) + "</a></li>").join("") +
+        (R.aprendidoRecentemente.length ? R.aprendidoRecentemente.map((r) => '<li><time datetime="' + esc(r.data) + '">' + esc(monthLabel(r.data)) + '</time><a href="' + topicUrl(r.topico) + '">' + esc(r.texto) + "</a></li>").join("") : "<li><span></span><span class=\"mute\">Nada registrado ainda.</span></li>") +
         "</ol>"
       ),
       frame(
@@ -246,9 +247,9 @@
 
     $("[data-rm-top]").innerHTML =
       '<div class="rm-where"><span class="eyebrow">Onde estou</span>' +
-      (f ? "<span>" + esc(faseNome(R, f.fase)) + " › <b>" + esc(f.nome) + "</b> · " + f.progresso + "%</span>" + topicLink(f.id, "Abrir" + icon("arrow"), "btn") : "") +
+      (!total ? "<span>Nenhum tópico ainda</span>" : "") + (f ? "<span>" + esc(faseNome(R, f.fase)) + " › <b>" + esc(f.nome) + "</b> · " + f.progresso + "%</span>" + topicLink(f.id, "Abrir" + icon("arrow"), "btn") : "") +
       "</div>" +
-      '<div class="rm-total">' + bar(Math.round((done / total) * 100)) + done + " de " + total + " tópicos dominados</div>";
+      (total ? '<div class="rm-total">' + bar(Math.round((done / total) * 100)) + done + " de " + total + " tópicos dominados</div>" : "");
 
     $("[data-legend]").innerHTML = ["dominado", "estudando", "proximo"]
       .map((s) => '<li><i class="pin" data-s="' + s + '"></i>' + STATUS[s] + "</li>").join("");
@@ -268,11 +269,12 @@
       R.fases.map((fase, i) => {
         const tops = R.topicos.filter((t) => t.fase === fase.id);
         const d = tops.filter((t) => t.status === "dominado").length;
-        const state = d === tops.length ? "done" : tops.every((t) => t.status === "proximo") ? "next" : "";
+        const state = tops.length && d === tops.length ? "done" : tops.every((t) => t.status === "proximo") ? "next" : "";
         return '<div class="rm-row ' + (i % 2 ? "l" : "r") + '">' +
           '<div class="rm-hub rv ' + state + '"><i class="rm-knot" aria-hidden="true"></i><span class="rm-label"><b>' + esc(fase.nome) + "</b><small>" + d + "/" + tops.length + " dominados</small></span></div>" +
           '<div class="rm-leaves">' + tops.map(leaf).join("") + "</div></div>";
-      }).join("");
+      }).join("") +
+      (R.fases.length ? "" : '<p class="empty-note rv">O roadmap está vazio por enquanto. As áreas e os tópicos aparecem aqui conforme forem adicionados em <code>data/roadmap.js</code>.</p>');
 
     $("[data-upcoming]").innerHTML = R.topicos
       .filter((t) => t.status === "proximo")
@@ -280,11 +282,11 @@
         '<span class="eyebrow">' + esc(faseNome(R, t.fase)) + "</span><h3>" + esc(t.nome) + "</h3><p>" + esc(t.resumo) + "</p>",
         { href: topicUrl(t.id), attrs: ' data-topic="' + esc(t.id) + '"' }
       ))
-      .join("");
+      .join("") || '<p class="empty-note">Nada na fila por enquanto.</p>';
 
     $("[data-recent]").innerHTML = R.aprendidoRecentemente
       .map((r) => '<li><time datetime="' + esc(r.data) + '">' + esc(monthLabel(r.data)) + "</time>" + topicLink(r.topico, esc(r.texto)) + "</li>")
-      .join("");
+      .join("") || '<li><span></span><span class="mute">Nada registrado ainda.</span></li>';
 
     // Desktop e tablet: abre em modal. Celular, ou Ctrl/Cmd/clique do meio: segue o link.
     const modal = topicModal(R);

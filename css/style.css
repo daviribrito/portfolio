@@ -652,6 +652,11 @@ a.frame:hover > .card { box-shadow: inset 0 0 0 1.5px var(--line-strong), var(--
 /* Página de uma matéria */
 .topic-page .topic-head { margin-bottom: 24px; }
 .topic-lab { margin-top: 12px; }
+
+/* Estado vazio (roadmap sem áreas, fila vazia) */
+.empty-note { position: relative; z-index: 1; max-width: 44em; margin: 0 auto; padding: 18px 22px; border-radius: var(--r-panel); background: var(--paper); box-shadow: inset 0 0 0 1.5px var(--line); color: var(--muted); font-size: 15px; text-align: center; }
+.empty-note code { font-size: 13px; padding: 1px 6px; border-radius: 6px; background: var(--card); }
+.upcoming > .empty-note { grid-column: 1 / -1; }
 .notes { margin-top: 0; }
 .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 26px; font-size: 14px; color: var(--faint); }
 .crumbs a { display: inline-flex; align-items: center; gap: 6px; color: var(--accent); font-weight: 500; }
