@@ -11,10 +11,10 @@
  *   "dominado"      entendo e já apliquei na prática
  *   "revisar"       já dominei, mas preciso revisar
  *
- *   Exemplo:  status: { "be-idempotencia": "pratica", "alg-busca": "dominado" }
+ *   Exemplo:  status: { "idem-chaves": "pratica", "alg-busca": "dominado" }
  *
  * conteudo: anotações por tópico (todos os campos são opcionais)
- *   "be-idempotencia": {
+ *   "idem-chaves": {
  *     anotacoes: ["..."],
  *     armadilhas: ["..."],
  *     codigo: `...`,
@@ -24,7 +24,7 @@
  *   }
  *
  * aprendidoRecentemente: registros curtos do que fez sentido
- *   { data: "2026-11", texto: "O que aprendi", topico: "be-idempotencia" }
+ *   { data: "2026-11", texto: "O que aprendi", topico: "idem-chaves" }
  */
 window.ESTUDOS = {
   status: {},

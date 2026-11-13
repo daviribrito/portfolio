@@ -16,8 +16,8 @@ Site estático (HTML, CSS e JS puros, sem build) com estas páginas:
 | Início | `index.html` | simulação de idempotência + resumo do roadmap |
 | Sobre | `sobre.html` | `data/sobre.js` |
 | Roadmap | `roadmap.html` | visão geral: progresso, o que estudar agora e as 11 áreas |
-| Área | `area.html?id=<area>` | objetivo, pré-requisitos, critérios e tópicos por nível (N1 a N4) |
-| Tópico | `topico.html?id=<id>` | o que aprender, como aplicar, pré-requisitos e as suas anotações; abre em modal no desktop e tablet |
+| Área | `area.html?id=<area>` | objetivo, prioridade, pré-requisitos, progresso por nível e os módulos com os seus tópicos |
+| Tópico | `topico.html?id=<id>` | conteúdos, aplicação no backend, critérios de conclusão, pré-requisitos e as suas anotações; abre em modal no desktop e tablet |
 | Commits | `commits.html` | API pública do GitHub + `data/config.js` |
 
 ## Editar o conteúdo
@@ -32,7 +32,7 @@ O roadmap fica em dois arquivos:
 
 | Arquivo | O que guarda |
 |---|---|
-| `data/roadmap.js` | A **estrutura**: 11 áreas e os tópicos de cada uma, com nível (N1 a N4), importância (essencial, importante, complementar), pré-requisitos, o que aprender e como aplicar. |
+| `data/roadmap.js` | A **estrutura**, na hierarquia Área → Módulo → Tópico: 11 áreas, 52 módulos e 222 tópicos. Cada tópico tem nível (N1 a N4), prioridade (essencial, importante, complementar), pré-requisitos, conteúdos, aplicação no backend e critérios de conclusão. |
 | `data/estudos.js` | O **seu progresso**: o status de cada tópico, as anotações e o "aprendido recentemente". Começa vazio. |
 
 ### Registrar um estudo
@@ -41,10 +41,10 @@ Em `data/estudos.js`:
 
 ```js
 status: {
-  "be-idempotencia": "pratica"      // nao-iniciado | estudo | pratica | dominado | revisar
+  "idem-chaves": "pratica"          // nao-iniciado | estudo | pratica | dominado | revisar
 },
 conteudo: {
-  "be-idempotencia": {
+  "idem-chaves": {
     anotacoes: ["..."],
     armadilhas: ["..."],
     codigo: `...`,
@@ -54,21 +54,22 @@ conteudo: {
   }
 },
 aprendidoRecentemente: [
-  { data: "2026-11", texto: "Chaves de idempotência com SET NX", topico: "be-idempotencia" }
+  { data: "2026-11", texto: "Chaves de idempotência com SET NX", topico: "idem-chaves" }
 ]
 ```
 
-O progresso de cada área é a fração de tópicos dominados (ou marcados para revisar). Um tópico só deve virar `dominado` quando foi entendido **e** aplicado na prática.
+O progresso é calculado por tópico e consolidado por módulo, área e no geral: é a fração de tópicos dominados (ou marcados para revisar). Um tópico só deve virar `dominado` quando foi entendido **e** aplicado na prática.
 
 ### Criar um tópico novo
 
-Adicione um objeto em `topicos` no `data/roadmap.js` com `id` único (minúsculas, números e hífen), `area`, `grupo`, `nome`, `nivel`, `importancia`, `pre`, `descricao`, `aprender` e `aplicar`. O cabeçalho do arquivo tem o modelo.
+Adicione um objeto em `topicos` no `data/roadmap.js` com `id` único (minúsculas, números e hífen), `modulo`, `nome`, `nivel`, `prioridade`, `pre`, `descricao`, `conteudos`, `aplicacao` e `criterios`. Para um módulo novo, adicione-o em `modulos`. O cabeçalho do arquivo tem o modelo.
 
 ### Ligação com o tech-notes
 
-Cada tópico vira uma nota no repositório [tech-notes](https://github.com/daviribrito/tech-notes) em `roadmap/<area>/<id>.md`, cada área ganha um `README.md` com os tópicos por nível, e `roadmap/README.md` mostra o progresso geral. A página do tópico aponta para a nota (botão "Nota no tech-notes") e a nota aponta para a página.
+Cada tópico vira uma nota no repositório [tech-notes](https://github.com/daviribrito/tech-notes) em `roadmap/<area>/<id>.md`, cada área ganha um `README.md` com os módulos e os seus tópicos, e `roadmap/README.md` mostra o progresso geral. A página do tópico aponta para a nota (botão "Nota no tech-notes") e a nota aponta para a página.
 
 A sincronização é feita pela Action **Sincronizar com o portfólio** do tech-notes. Ela roda a cada hora e também pode ser disparada à mão em Actions → Run workflow. Se você remover um tópico, a nota gerada dele também é removida. Notas escritas à mão no tech-notes nunca são tocadas.
+
 ### Sincronizar na hora (opcional)
 
 Por padrão a nota aparece em até 1 hora. Para gerar no mesmo minuto do push:

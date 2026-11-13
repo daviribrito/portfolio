@@ -591,6 +591,26 @@ main { max-width: var(--wrap); margin: 0 auto; padding: 18px clamp(10px, 2.4vw, 
 .topic-refs { margin-top: 18px; display: grid; gap: 8px; }
 .topic-refs ul { display: grid; gap: 6px; }
 
+/* Critérios de conclusão (checklist) */
+.checks { display: grid; gap: 10px; }
+.checks li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; font-size: 15px; line-height: 1.5; color: var(--soft); }
+.checks .box { width: 16px; height: 16px; margin-top: 3px; border-radius: 5px; box-shadow: inset 0 0 0 1.75px var(--line-strong); }
+.checks .box.on { background: var(--live); box-shadow: none; }
+
+/* Progresso por nível na página da área */
+.lvl-list { display: grid; gap: 14px; }
+.lvl-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; }
+.lvl-list b { font-size: 15px; font-weight: 700; }
+.lvl-list small { grid-column: 1 / -1; font-size: 13px; color: var(--faint); }
+.lvl-list .bar { grid-column: 1; }
+.lvl-list span { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Cabeçalho de módulo */
+.mod-head { align-items: center; }
+.mod-progress { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.mod-progress .bar { width: 120px; }
+.level-block { scroll-margin-top: 96px; }
+
 .rmap { position: relative; display: flex; flex-direction: column; gap: 52px; padding: 4px 0 12px; }
 .rmap::before { content: ""; position: absolute; left: 50%; top: 28px; bottom: 20px; width: 2px; margin-left: -1px; border-radius: 1px; background: var(--line); }
 
