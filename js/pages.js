@@ -505,6 +505,17 @@
   function commits() {
     const root = $("[data-commits]");
     if (root) window.Commits.renderPage(root);
+
+    // Contribuições do GitHub (data/contribuicoes.json, atualizado por uma Action diária).
+    const sk = $("[data-skyline]");
+    if (sk && window.Skyline) {
+      fetch("data/contribuicoes.json", { cache: "no-cache" })
+        .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+        .then((d) => window.Skyline.mount(sk, d))
+        .catch(() => {
+          sk.innerHTML = '<div class="state"><strong>Contribuições indisponíveis</strong>O calendário do GitHub ainda não foi sincronizado. Veja o perfil direto no GitHub.</div>';
+        });
+    }
   }
 
   const PAGES = { home, sobre, roadmap, area: areaPage, topico, commits };

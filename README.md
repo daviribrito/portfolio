@@ -104,4 +104,8 @@ As regras de design (cores, tipografia, componentes, temas claro e escuro) estã
 
 ## Sobre a aba Commits
 
+No topo fica o gráfico de **contribuições do GitHub**, com visualização em grade ou em skyline 3D (arraste para girar, aponte um dia para ler, use as setas do teclado). Os dados vêm de `data/contribuicoes.json`, que a Action **Atualizar contribuições** (`.github/workflows/contribuicoes.yml`) regenera todo dia a partir do calendário público do GitHub (`scripts/contribuicoes.mjs`). Para atualizar na hora: Actions → Atualizar contribuições → Run workflow.
+
+Abaixo vêm os projetos.
+
 Ela usa a API pública do GitHub sem token: são 60 consultas por hora para cada visitante, e as respostas ficam 15 minutos em cache no navegador. Se o limite estourar, a página mostra o horário em que o GitHub libera novas consultas e um botão para tentar de novo.
